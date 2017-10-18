@@ -22,27 +22,40 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""reroils record editor"""
+"""reroils record editor."""
 
 # TODO: This is an example file. Remove it if you do not need it, including
 # the templates and static folders as well as the test case.
 
 from __future__ import absolute_import, print_function
 
-from flask import Blueprint, render_template
-from flask_babelex import gettext as _
+from flask import Blueprint, current_app, render_template
+
+from .utils import get_schema
 
 blueprint = Blueprint(
     'reroils_record_editor',
     __name__,
     template_folder='templates',
     static_folder='static',
+    url_prefix='/editor'
 )
 
 
-@blueprint.route("/")
+@blueprint.route("/new")
 def index():
     """Render a basic view."""
+    from json import loads
+    from pkg_resources import resource_string
+
+    options = current_app.config['REROILS_RECORD_EDITOR_FORM_OPTIONS']
+    options_in_bytes = resource_string(*options)
+
     return render_template(
         "reroils_record_editor/index.html",
-        module_name=_('Reroils-Record-Editor'))
+        form=loads(options_in_bytes.decode('utf8')),
+        model={},
+        schema=get_schema(
+            current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
+        )
+    )

@@ -62,10 +62,12 @@ from __future__ import absolute_import, print_function
 
 from flask import Flask
 from flask_babelex import Babel
+from invenio_jsonschemas import InvenioJSONSchemas
 
 from reroils_record_editor import ReroilsRecordEditor
 
 # Create Flask application
 app = Flask(__name__)
+InvenioJSONSchemas(app)
 Babel(app)
 ReroilsRecordEditor(app)

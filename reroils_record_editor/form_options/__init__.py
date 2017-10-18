@@ -22,38 +22,6 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Module tests."""
+"""Default jsonschemas for reroils record editor."""
 
 from __future__ import absolute_import, print_function
-
-from flask import Flask
-
-from reroils_record_editor import ReroilsRecordEditor
-
-
-def test_version():
-    """Test version import."""
-    from reroils_record_editor import __version__
-    assert __version__
-
-
-def test_init():
-    """Test extension initialization."""
-    app = Flask('testapp')
-    ext = ReroilsRecordEditor(app)
-    assert 'reroils-record-editor' in app.extensions
-
-    app = Flask('testapp')
-    ext = ReroilsRecordEditor()
-    assert 'reroils-record-editor' not in app.extensions
-    ext.init_app(app)
-    assert 'reroils-record-editor' in app.extensions
-
-
-# def test_view(app):
-#     """Test view."""
-#     ReroilsRecordEditor(app)
-#     with app.test_client() as client:
-#         res = client.get("/editor/new")
-#         assert res.status_code == 200
-#         assert 'Welcome to Reroils-Record-Editor' in str(res.data)

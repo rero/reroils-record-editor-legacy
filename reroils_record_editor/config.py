@@ -22,13 +22,17 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""reroils record editor"""
-
-# TODO: This is an example file. Remove it if your package does not use any
-# extra configuration variables.
+"""reroils record editor."""
 
 REROILS_RECORD_EDITOR_DEFAULT_VALUE = 'foobar'
 """Default value for the application."""
 
 REROILS_RECORD_EDITOR_BASE_TEMPLATE = 'reroils_record_editor/base.html'
 """Default base template for the demo page."""
+
+REROILS_RECORD_EDITOR_JSONSCHEMA = 'records/editor-v0.0.1.json'
+
+REROILS_RECORD_EDITOR_FORM_OPTIONS = (
+    'reroils_record_editor.form_options',
+    'records/editor-v0.0.1.json'
+)

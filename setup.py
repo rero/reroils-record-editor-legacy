@@ -60,6 +60,7 @@ setup_requires = [
 
 install_requires = [
     'Flask-BabelEx>=0.9.2',
+    'invenio-jsonschemas>=1.0.0a5'
 ]
 
 packages = find_packages()
@@ -91,6 +92,9 @@ setup(
         ],
         'invenio_i18n.translations': [
             'messages = reroils_record_editor',
+        ],
+        'invenio_jsonschemas.schemas': [
+            'record_editor = reroils_record_editor.jsonschemas'
         ],
         # TODO: Edit these entry points to fit your needs.
         # 'invenio_access.actions': [],

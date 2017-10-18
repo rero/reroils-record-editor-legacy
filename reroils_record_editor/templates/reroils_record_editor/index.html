@@ -1,31 +1,33 @@
-{#
-# This file is part of Invenio.
-# Copyright (C) 2017 RERO.
-#
-# Invenio is free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
-#
-# Invenio is distributed in the hope that it will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Invenio; if not, write to the
-# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
-# MA 02111-1307, USA.
-#
-# In applying this license, RERO does not
-# waive the privileges and immunities granted to it by virtue of its status
-# as an Intergovernmental Organization or submit itself to any jurisdiction.
-#}
-
 {%- extends config.REROILS_RECORD_EDITOR_BASE_TEMPLATE %}
 
 {%- block page_body %}
-TODO: Example template, please remove if you do not need it.
-{{_('Welcome to %(module_name)s', module_name=module_name)}}
+<div class="container">
+    <div class="row">
+        <h1>Record Editor</h1>
+        <reroils-editor id="reroils-editor" ng-controller="FormController">
+            <ng-initial
+                form='{{ form | tojson }}'
+                model='{{ model | tojson }}'
+                schema='{{ schema | tojson }}'
+            ></ng-initial>
+            <form name="record-editor" ng-submit="onSubmit(record-editor)">
+                <div class="container">
+                    <div class="row">
+                        <div sf-schema="params.schema" sf-form="params.form" sf-model="params.model"></div>
+                    </div>
+                </div>
+            </form>
+        </reroils-editor>
+    </div>
+</div>
 {%- endblock %}
 
+{%- block javascript %}
+<script type="text/javascript" src="/static/node_modules/angular/angular.min.js"></script>
+<script type="text/javascript" src="/static/node_modules/angular-sanitize/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="/static/node_modules/tv4/tv4.js"></script>
+<script type="text/javascript" src="/static/node_modules/objectpath/lib/ObjectPath.js"></script>
+<script type="text/javascript" src="/static/node_modules/angular-schema-form/dist/schema-form.min.js"></script>
+<script type="text/javascript" src="/static/node_modules/angular-schema-form/dist/bootstrap-decorator.min.js"></script>
+<script type="text/javascript" src="/static/js/reroils-editor.js"></script>
+{%- endblock %}

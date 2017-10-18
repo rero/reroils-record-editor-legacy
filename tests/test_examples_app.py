@@ -51,7 +51,7 @@ def example_app():
 
     # Start example app
     webapp = subprocess.Popen(
-        'FLASK_APP=app.py flask run --debugger -p 5000',
+        'FLASK_APP=app.py flask run --debugger -p 5001',
         stdout=subprocess.PIPE, preexec_fn=os.setsid, shell=True)
     time.sleep(10)
     yield webapp
@@ -68,6 +68,6 @@ def example_app():
 
 def test_example_app_role_admin(example_app):
     """Test example app."""
-    cmd = 'curl http://0.0.0.0:5000/'
+    cmd = 'curl http://0.0.0.0:5001/editor/new'
     output = subprocess.check_output(cmd, shell=True)
-    assert b'Welcome to Reroils-Record-Editor' in output
+    assert b'Record Editor' in output

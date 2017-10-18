@@ -1,0 +1,16 @@
+[
+    "name",
+    "email",
+    {
+        "key": "comment",
+        "type": "textarea",
+        "placeholder": "Make a comment"
+    },
+    {
+        "type": "actions",
+        "items": [
+            { "type": "submit", "title": "Ok" },
+            { "type": "button", "title": "Cancel", "onClick": "goBack()" }
+        ]
+    }
+]
