@@ -1,5 +1,5 @@
 angular.module('reroilseditor', ['schemaForm'])
-    .controller('FormController', function($scope) {
+    .controller('FormController', function($scope, $http, $window) {
         $scope.params = {
             form: ["*"],
             model: {},
@@ -22,7 +22,19 @@ angular.module('reroilseditor', ['schemaForm'])
 
             // Then we check if the form is valid
             if (form.$valid) {
-                console.log('Valid');
+                $http({
+                        method: 'POST',
+                        data: $scope.params.model,
+                        url: '/editor/records/save'
+                    }).then(function successCallback(response) {
+                        $scope.message = response.data.message;
+                        $scope.pid = response.data.pid;
+                        $window.location.href = '/records/' + response.data.pid;
+                    }, function errorCallback(response) {
+                        $scope.message.type = 'danger';
+                        $scope.message.content = 'An error occurs during the data submission.';
+                        $scope.message.title = 'Error: ';
+                });
             }
         }
     })

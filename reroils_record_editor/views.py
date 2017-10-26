@@ -29,7 +29,13 @@
 
 from __future__ import absolute_import, print_function
 
-from flask import Blueprint, current_app, render_template
+import uuid
+
+from flask import Blueprint, current_app, jsonify, render_template, request
+from invenio_db import db
+from invenio_indexer.api import RecordIndexer
+from invenio_records.api import Record
+from reroils_data import minters
 
 from .utils import get_schema
 
@@ -57,5 +63,33 @@ def index():
         model={},
         schema=get_schema(
             current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
-        )
+        ),
+        message={}
     )
+
+
+@blueprint.route("/records/save", methods=['POST'])
+def save_record():
+    """Save record."""
+    record = request.get_json()
+    uid = uuid.uuid4()
+    pid = minters.bibid_minter(uid, record)
+    record['identifiers'] = {'reroID': 'PB' + record['bibid']}
+    rec = Record.create(record, id_=uid)
+
+    message = {
+        'message': {
+            'title': "Success: ",
+            'content': 'the record %s with uuid %s has been created'
+            % (pid.pid_value, uid),
+            'status': 'info'
+        },
+        'pid': pid.pid_value
+    }
+
+    db.session.commit()
+    record_indexer = RecordIndexer()
+    record_indexer.index(rec)
+    # current_app.logger.info('added record %s %s' % (pid.pid_value, uid))
+
+    return jsonify(message)
