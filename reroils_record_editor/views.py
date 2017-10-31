@@ -31,7 +31,8 @@ from __future__ import absolute_import, print_function
 
 import uuid
 
-from flask import Blueprint, current_app, jsonify, render_template, request
+from flask import Blueprint, current_app, flash, jsonify, render_template, \
+    request
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer
 from invenio_records.api import Record
@@ -65,8 +66,7 @@ def index():
         )},
         schema=get_schema(
             current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
-        ),
-        message={}
+        )
     )
 
 
@@ -85,17 +85,16 @@ def save_record():
     rec = Record.create(record, id_=uid)
 
     message = {
-        'message': {
-            'title': "Success: ",
-            'content': 'the record %s with uuid %s has been created'
-            % (pid.pid_value, uid),
-            'status': 'info'
-        },
-        'pid': pid.pid_value
+        "pid": pid.pid_value
     }
 
     db.session.commit()
     record_indexer = RecordIndexer()
     record_indexer.index(rec)
+
+    flash(
+        'the record %s with uuid %s has been created' % (pid.pid_value, uid),
+        'success'
+    )
 
     return jsonify(message)

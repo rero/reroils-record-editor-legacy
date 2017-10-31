@@ -27,13 +27,11 @@ angular.module('reroilseditor', ['schemaForm'])
                         data: $scope.params.model,
                         url: '/editor/records/save'
                     }).then(function successCallback(response) {
-                        $scope.message = response.data.message;
-                        $scope.pid = response.data.pid;
                         $window.location.href = '/records/' + response.data.pid;
                     }, function errorCallback(response) {
                         $scope.message.type = 'danger';
                         $scope.message.content = 'An error occurs during the data submission.';
-                        $scope.message.title = 'Error: ';
+                        $scope.message.title = 'Error:';
                 });
             }
         }
@@ -48,6 +46,11 @@ angular.module('reroilseditor', ['schemaForm'])
                     'edit.init', attrs.form, attrs.schema, attrs.model
                 );
             }
+        }
+    })
+    .directive('alert', function() {
+        return {
+            'template': '<div ng-show="message.title" class="alert alert-{{message.type}}"><strong>{{message.title}}</strong> {{message.content}}</div>'
         }
     });
 

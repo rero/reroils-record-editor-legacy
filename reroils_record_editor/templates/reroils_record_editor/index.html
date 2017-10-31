@@ -4,15 +4,13 @@
 <div class="container">
     <div class="row">
         <h1>Record Editor</h1>
-        <div ng-show="{{ message.title }}" class="alert alert-{{ message.type }}">
-            <strong>{{ message.title }}</strong> {{ message.content }}
-        </div>
         <reroils-editor id="reroils-editor" ng-controller="FormController">
             <ng-initial
                 form='{{ form | tojson }}'
                 model='{{ model | tojson }}'
                 schema='{{ schema | tojson }}'
             ></ng-initial>
+            <alert></alert>
             <form name="recordEditor" ng-submit="onSubmit(recordEditor)">
                 <div class="container">
                     <div class="row">
