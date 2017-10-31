@@ -37,7 +37,7 @@ from invenio_indexer.api import RecordIndexer
 from invenio_records.api import Record
 from reroils_data import minters
 
-from .utils import get_schema
+from .utils import get_schema, get_schema_url
 
 blueprint = Blueprint(
     'reroils_record_editor',
@@ -60,7 +60,9 @@ def index():
     return render_template(
         "reroils_record_editor/index.html",
         form=loads(options_in_bytes.decode('utf8')),
-        model={},
+        model={'$schema': get_schema_url(
+            current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
+        )},
         schema=get_schema(
             current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
         ),
