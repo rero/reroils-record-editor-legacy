@@ -77,6 +77,11 @@ def save_record():
     uid = uuid.uuid4()
     pid = minters.bibid_minter(uid, record)
     record['identifiers'] = {'reroID': 'PB' + record['bibid']}
+
+    # clean dirty data provided by angular-schema-form
+    from reroils_data.utils import clean_dict_keys
+    record = clean_dict_keys(record)
+
     rec = Record.create(record, id_=uid)
 
     message = {
@@ -92,6 +97,5 @@ def save_record():
     db.session.commit()
     record_indexer = RecordIndexer()
     record_indexer.index(rec)
-    # current_app.logger.info('added record %s %s' % (pid.pid_value, uid))
 
     return jsonify(message)
