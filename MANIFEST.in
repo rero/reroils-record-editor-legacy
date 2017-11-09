@@ -34,6 +34,7 @@ include .dockerignore
 include .editorconfig
 include .tx/config
 prune docs/_build
+prune development
 recursive-include reroils_record_editor *.po *.pot *.mo
 
 # added by check_manifest.py
