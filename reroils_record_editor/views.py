@@ -37,6 +37,7 @@ from invenio_db import db
 from invenio_indexer.api import RecordIndexer
 from invenio_records.api import Record
 from reroils_data import minters
+from reroils_data.utils import remove_pid
 
 from .utils import get_schema, get_schema_url
 
@@ -57,10 +58,12 @@ def index():
 
     options = current_app.config['REROILS_RECORD_EDITOR_FORM_OPTIONS']
     options_in_bytes = resource_string(*options)
+    editor_options = loads(options_in_bytes.decode('utf8'))
+    remove_pid(editor_options)
 
     return render_template(
         "reroils_record_editor/index.html",
-        form=loads(options_in_bytes.decode('utf8')),
+        form=editor_options,
         model={'$schema': get_schema_url(
             current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
         )},
