@@ -30,13 +30,17 @@
 from __future__ import absolute_import, print_function
 
 import uuid
+from urllib.request import urlopen
 
-from flask import Blueprint, current_app, flash, jsonify, render_template, \
-    request
+import six
+from dojson.contrib.marc21.utils import create_record, split_stream
+from flask import Blueprint, abort, current_app, flash, jsonify, \
+    render_template, request
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer
 from invenio_records.api import Record
 from reroils_data import minters
+from reroils_data.dojson.contrib.unimarctojson import unimarctojson
 from reroils_data.utils import remove_pid
 
 from .utils import get_schema, get_schema_url
@@ -79,7 +83,6 @@ def save_record():
     record = request.get_json()
     uid = uuid.uuid4()
     pid = minters.bibid_minter(uid, record)
-    record['identifiers'] = {'reroID': 'PB' + record['bibid']}
 
     # clean dirty data provided by angular-schema-form
     from reroils_data.utils import clean_dict_keys
@@ -101,3 +104,41 @@ def save_record():
     )
 
     return jsonify(message)
+
+
+@blueprint.route("/import/bnf/ean/<int:ean>")
+def import_bnf_ean(ean):
+    """Import record from BNFr given a isbn 13 without dashes."""
+    bnf_url = current_app.config['REROILS_RECORD_EDITOR_IMPORT_BNF_EAN']
+    try:
+        with urlopen(bnf_url % ean) as response:
+            if response.status != 200:
+                abort(500)
+            # read the xml date from the HTTP response
+            xml_data = response.read()
+
+            # create a xml file in memory
+            xml_file = six.BytesIO()
+            xml_file.write(xml_data)
+            xml_file.seek(0)
+
+            # get the record in xml if exists
+            # note: the request should returns one record max
+            xml_record = next(split_stream(xml_file))
+
+            # convert xml in marc json
+            json_data = create_record(xml_record)
+
+            # convert marc json to local json format
+            record = unimarctojson.do(json_data)
+            return jsonify(record)
+
+    # no record found!
+    except StopIteration:
+        abort(404)
+    # other errors
+    except Exception as e:
+        import sys
+        print(e)
+        sys.stdout.flush()
+        abort(500)

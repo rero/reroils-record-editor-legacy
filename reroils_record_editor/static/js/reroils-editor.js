@@ -1,21 +1,53 @@
 angular.module('reroilseditor', ['schemaForm'])
     .controller('FormController', function($scope, $http, $window) {
+
         $scope.params = {
             form: ["*"],
             model: {},
             schema: {}
         };
+
         $scope.message = {
             title:"",
             content: "",
             type: ""
         };
+
         function editorInit(init, form, schema, model) {
             $scope.params.schema = angular.fromJson(schema);
             $scope.params.model = angular.fromJson(model);
             $scope.params.form = angular.fromJson(form);
         };
+
         $scope.$on('edit.init', editorInit);
+        $scope.importEanFromBnf = function(test) {
+          var isbn = $scope.params.model.identifiers.isbn;
+          var schema = $scope.params.model['$schema'];
+          $http({
+              method: 'GET',
+                  url: '/editor/import/bnf/ean/' + isbn
+              }).then(function successCallback(response) {
+                  $scope.params.model = response.data;
+                  $scope.message.type = 'success';
+                  $scope.message.content = 'import done.';
+                  $scope.message.title = 'Success:';
+                  $scope.params.model['$schema'] = schema;
+              }, function errorCallback(response) {
+                  if (response.status === 404) {
+                      $scope.message.type = 'warning';
+                      $scope.message.content = 'Record not found given isbn: ' + isbn + '.';
+                      $scope.message.title = 'Warning:';
+                      $scope.params.model = {'identifiers':{'isbn': isbn}};
+                  } else {
+                      $scope.message.type = 'danger';
+                      $scope.message.content = 'An error occured on the remote server.';
+                      $scope.message.title = 'Error:';
+                      $scope.params.model = {'identifiers':{'isbn': isbn}};
+                  }
+                  $scope.params.model['$schema'] = schema;
+          });
+        }
+
         $scope.onSubmit = function(form) {
             // First we broadcast an event so all fields validate themselves
             $scope.$broadcast('schemaFormValidate');
@@ -36,6 +68,7 @@ angular.module('reroilseditor', ['schemaForm'])
             }
         }
     })
+
     .directive('ngInitial', function($parse) {
         return {
             restrict: 'E',

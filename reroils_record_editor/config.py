@@ -36,3 +36,8 @@ REROILS_RECORD_EDITOR_FORM_OPTIONS = (
     'reroils_record_editor.form_options',
     'records/editor-v0.0.1.json'
 )
+
+REROILS_RECORD_EDITOR_IMPORT_BNF_EAN = 'http://catalogue.bnf.fr/api/SRU?'\
+    'version=1.2&operation=searchRetrieve'\
+    '&recordSchema=unimarcxchange&maximumRecords=1'\
+    '&startRecord=1&query=bib.ean%%20all%%20"%s"'
