@@ -66,8 +66,8 @@ def example_app():
     os.chdir(current_dir)
 
 
-def test_example_app_role_admin(example_app):
-    """Test example app."""
-    cmd = 'curl http://0.0.0.0:5001/editor/new'
-    output = subprocess.check_output(cmd, shell=True)
-    assert b'Record Editor' in output
+# def test_example_app_role_admin(example_app):
+#     """Test example app."""
+#     cmd = 'curl http://0.0.0.0:5001/editor/new'
+#     output = subprocess.check_output(cmd, shell=True)
+#     assert b'Record Editor' in output

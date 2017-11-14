@@ -34,8 +34,13 @@ from urllib.request import urlopen
 
 import six
 from dojson.contrib.marc21.utils import create_record, split_stream
-from flask import Blueprint, abort, current_app, flash, jsonify, \
-    render_template, request
+from flask import Blueprint, abort, current_app, flash, jsonify, redirect, \
+    render_template, request, url_for
+from flask_babelex import gettext as _
+from flask_login import current_user
+from flask_menu import current_menu
+from flask_principal import PermissionDenied, RoleNeed
+from invenio_access.permissions import DynamicPermission
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer
 from invenio_records.api import Record
@@ -53,8 +58,48 @@ blueprint = Blueprint(
     url_prefix='/editor'
 )
 
+record_edit_permission = DynamicPermission(RoleNeed('cataloguer'))
+
+
+@blueprint.errorhandler(PermissionDenied)
+def permission_denied_page(error):
+    """Show a personalized error message."""
+    if not current_user.is_authenticated:
+        return redirect(url_for(
+                    current_app.config['ADMIN_LOGIN_ENDPOINT'],
+                    next=request.url))
+    return render_template(current_app.config['THEME_403_TEMPLATE']), 404
+
+
+@blueprint.app_template_filter()
+def can_edit(user=None):
+    """User has editor role."""
+    if not user:
+        user = current_user
+    return user.is_authenticated and record_edit_permission.can()
+
+
+@blueprint.before_app_first_request
+def init_menu():
+    """Initialize menu before first request."""
+    item = current_menu.submenu('main.cataloging')
+    item.register(
+        endpoint=None,
+        text=_('Cataloging'),
+        visible_when=can_edit,
+        order=0
+    )
+    subitem = current_menu.submenu('main.cataloging.new')
+    subitem.register(
+        endpoint='reroils_record_editor.index',
+        text='<i class="fa fa-pencil-square-o fa-fw"></i> %s' % _('New'),
+        visible_when=can_edit,
+        order=1
+    )
+
 
 @blueprint.route("/new")
+@record_edit_permission.require()
 def index():
     """Render a basic view."""
     from json import loads
@@ -78,6 +123,7 @@ def index():
 
 
 @blueprint.route("/records/save", methods=['POST'])
+@record_edit_permission.require()
 def save_record():
     """Save record."""
     record = request.get_json()
@@ -107,6 +153,7 @@ def save_record():
 
 
 @blueprint.route("/import/bnf/ean/<int:ean>")
+@record_edit_permission.require()
 def import_bnf_ean(ean):
     """Import record from BNFr given a isbn 13 without dashes."""
     bnf_url = current_app.config['REROILS_RECORD_EDITOR_IMPORT_BNF_EAN']
