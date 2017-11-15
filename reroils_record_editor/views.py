@@ -30,6 +30,7 @@
 from __future__ import absolute_import, print_function
 
 import uuid
+from json import loads
 from urllib.request import urlopen
 
 import six
@@ -43,10 +44,13 @@ from flask_principal import PermissionDenied, RoleNeed
 from invenio_access.permissions import DynamicPermission
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer
+from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_pidstore.resolver import Resolver
 from invenio_records.api import Record
+from pkg_resources import resource_string
 from reroils_data import minters
 from reroils_data.dojson.contrib.unimarctojson import unimarctojson
-from reroils_data.utils import remove_pid
+from reroils_data.utils import clean_dict_keys, remove_pid
 
 from .utils import get_schema, get_schema_url
 
@@ -68,7 +72,7 @@ def permission_denied_page(error):
         return redirect(url_for(
                     current_app.config['ADMIN_LOGIN_ENDPOINT'],
                     next=request.url))
-    return render_template(current_app.config['THEME_403_TEMPLATE']), 404
+    return render_template(current_app.config['THEME_403_TEMPLATE']), 403
 
 
 @blueprint.app_template_filter()
@@ -89,22 +93,47 @@ def init_menu():
         visible_when=can_edit,
         order=0
     )
+
     subitem = current_menu.submenu('main.cataloging.new')
     subitem.register(
-        endpoint='reroils_record_editor.index',
+        endpoint='reroils_record_editor.new',
         text='<i class="fa fa-pencil-square-o fa-fw"></i> %s' % _('New'),
         visible_when=can_edit,
-        order=1
+        order=0
+    )
+
+
+@blueprint.route("/edit/<int:bibid>")
+@record_edit_permission.require()
+def edit(bibid):
+    """Edior view to update an existing record."""
+    resolver = Resolver(pid_type='recid',
+                        object_type='rec',
+                        getter=Record.get_record)
+    try:
+        pid, model = resolver.resolve(bibid)
+    except PIDDoesNotExistError:
+        flash(_('record %s does not exists' % bibid), 'danger')
+        abort(404)
+
+    options = current_app.config['REROILS_RECORD_EDITOR_FORM_OPTIONS']
+    options_in_bytes = resource_string(*options)
+    editor_options = loads(options_in_bytes.decode('utf8'))
+
+    return render_template(
+        "reroils_record_editor/index.html",
+        form=editor_options,
+        model=model,
+        schema=get_schema(
+            current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
+        )
     )
 
 
 @blueprint.route("/new")
 @record_edit_permission.require()
-def index():
-    """Render a basic view."""
-    from json import loads
-    from pkg_resources import resource_string
-
+def new():
+    """Edior view for new a record."""
     options = current_app.config['REROILS_RECORD_EDITOR_FORM_OPTIONS']
     options_in_bytes = resource_string(*options)
     editor_options = loads(options_in_bytes.decode('utf8'))
@@ -126,28 +155,46 @@ def index():
 @record_edit_permission.require()
 def save_record():
     """Save record."""
-    record = request.get_json()
-    uid = uuid.uuid4()
-    pid = minters.bibid_minter(uid, record)
-
-    # clean dirty data provided by angular-schema-form
-    from reroils_data.utils import clean_dict_keys
-    record = clean_dict_keys(record)
-
-    rec = Record.create(record, id_=uid)
-
-    message = {
-        "pid": pid.pid_value
-    }
+    # load and clean dirty data provided by angular-schema-form
+    record = clean_dict_keys(request.get_json())
+    bibid = record.get('bibid')
+    # update an existing record
+    if bibid:
+        resolver = Resolver(pid_type='recid',
+                            object_type='rec',
+                            getter=Record.get_record)
+        try:
+            pid, rec = resolver.resolve(bibid)
+        except PIDDoesNotExistError:
+            flash(_('record %s does not exists' % bibid), 'danger')
+            abort(404)
+        rec.update(record)
+        rec.commit()
+    # create a new record
+    else:
+        # generate bibid
+        uid = uuid.uuid4()
+        pid = minters.bibid_minter(uid, record)
+        # create a new record
+        rec = Record.create(record, id_=uid)
 
     db.session.commit()
+
     record_indexer = RecordIndexer()
     record_indexer.index(rec)
-
-    flash(
-        'the record %s with uuid %s has been created' % (pid.pid_value, uid),
-        'success'
-    )
+    message = {
+            "pid": pid.pid_value
+    }
+    if bibid:
+        flash(
+            'the record %s has been updated' % pid.pid_value,
+            'success'
+        )
+    else:
+        flash(
+            'the record %s has been created' % pid.pid_value,
+            'success'
+        )
 
     return jsonify(message)
 
