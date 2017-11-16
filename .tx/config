@@ -42,8 +42,8 @@
 [main]
 host = https://www.transifex.com
 
-[invenio.reroils-record-editor-messages]
+[reroils.reroils-record-editor-messages]
 file_filter = reroils_record_editor/translations/<lang>/LC_MESSAGES/messages.po
 source_file = reroils_record_editor/translations/messages.pot
-source_lang = en
+source_lang = en_US
 type = PO
