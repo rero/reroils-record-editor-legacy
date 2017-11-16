@@ -63,7 +63,9 @@ install_requires = [
     'invenio-jsonschemas>=1.0.0a5',
     'invenio-db >= 1.0.0b4',
     'invenio-indexer >= 1.0.0a10',
-    'elasticsearch-dsl>=2.0.0,<3.0.0'
+    'elasticsearch-dsl>=2.0.0,<3.0.0',
+    'invenio-access>=1.0.0b1',
+    'dojson>=1.0'
 ]
 
 packages = find_packages()
