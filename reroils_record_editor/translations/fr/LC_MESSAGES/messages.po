@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: reroils-record-editor 0.1.0a4\n"
 "Report-Msgid-Bugs-To: software@rero.ch\n"
-"POT-Creation-Date: 2017-11-16 09:31+0000\n"
+"POT-Creation-Date: 2017-11-20 09:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Johnny Mariéthoz <johnny.mariethoz@rero.ch>, 2017\n"
 "Language: fr\n"
@@ -30,4 +30,3 @@ msgstr "Nouveau"
 #, python-format
 msgid "record %s does not exists"
 msgstr "la notice %s n'existe pas"
-
