@@ -27,21 +27,21 @@ angular.module('reroilseditor', ['schemaForm'])
               method: 'GET',
                   url: '/editor/import/bnf/ean/' + isbn
               }).then(function successCallback(response) {
-                  $scope.params.model = response.data;
-                  $scope.message.type = 'success';
-                  $scope.message.content = 'import done.';
-                  $scope.message.title = 'Success:';
+                  $scope.params.model = response.data.record;
+                  $scope.message.type = response.data.type;
+                  $scope.message.content = response.data.content;
+                  $scope.message.title = response.data.title;
                   $scope.params.model['$schema'] = schema;
               }, function errorCallback(response) {
                   if (response.status === 404) {
-                      $scope.message.type = 'warning';
-                      $scope.message.content = 'Record not found given isbn: ' + isbn + '.';
-                      $scope.message.title = 'Warning:';
+                      $scope.message.type = response.data.type;
+                      $scope.message.content = response.data.content;
+                      $scope.message.title = response.data.title;
                       $scope.params.model = {'identifiers':{'isbn': isbn}};
                   } else {
-                      $scope.message.type = 'danger';
-                      $scope.message.content = 'An error occured on the remote server.';
-                      $scope.message.title = 'Error:';
+                    $scope.message.type = response.data.type;
+                      $scope.message.content = response.data.content;
+                      $scope.message.title = response.data.title;
                       $scope.params.model = {'identifiers':{'isbn': isbn}};
                   }
                   $scope.params.model['$schema'] = schema;
@@ -62,7 +62,7 @@ angular.module('reroilseditor', ['schemaForm'])
                         $window.location.href = '/records/' + response.data.pid;
                     }, function errorCallback(response) {
                         $scope.message.type = 'danger';
-                        $scope.message.content = 'An error occurs during the data submission.';
+                        $scope.message.content = response.data.content;
                         $scope.message.title = 'Error:';
                 });
             }

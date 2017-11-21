@@ -155,49 +155,60 @@ def new():
 @record_edit_permission.require()
 def save_record():
     """Save record."""
-    # load and clean dirty data provided by angular-schema-form
-    record = clean_dict_keys(request.get_json())
-    bibid = record.get('bibid')
-    # update an existing record
-    if bibid:
-        resolver = Resolver(pid_type='recid',
-                            object_type='rec',
-                            getter=Record.get_record)
-        try:
+    try:
+        # load and clean dirty data provided by angular-schema-form
+        record = clean_dict_keys(request.get_json())
+        bibid = record.get('bibid')
+
+        # update an existing record
+        if bibid:
+            resolver = Resolver(pid_type='recid',
+                                object_type='rec',
+                                getter=Record.get_record)
             pid, rec = resolver.resolve(bibid)
-        except PIDDoesNotExistError:
-            flash(_('record %s does not exists' % bibid), 'danger')
-            abort(404)
-        rec.update(record)
-        rec.commit()
-    # create a new record
-    else:
-        # generate bibid
-        uid = uuid.uuid4()
-        pid = minters.bibid_minter(uid, record)
+
+            rec.update(record)
+            rec.commit()
         # create a new record
-        rec = Record.create(record, id_=uid)
+        else:
+            # generate bibid
+            uid = uuid.uuid4()
+            pid = minters.bibid_minter(uid, record)
+            # create a new record
+            rec = Record.create(record, id_=uid)
 
-    db.session.commit()
+        db.session.commit()
 
-    record_indexer = RecordIndexer()
-    record_indexer.index(rec)
-    message = {
-            "pid": pid.pid_value
-    }
-    if bibid:
-        flash(
-            'the record %s has been updated' % pid.pid_value,
-            'success'
-        )
-    else:
-        flash(
-            'the record %s has been created' % pid.pid_value,
-            'success'
-        )
+        record_indexer = RecordIndexer()
+        record_indexer.index(rec)
+        message = {
+                "pid": pid.pid_value
+        }
+        if bibid:
+            flash(
+                _('the record %s has been updated' % pid.pid_value),
+                'success'
+            )
+        else:
+            flash(
+                _('the record %s has been created' % pid.pid_value),
+                'success'
+            )
+        return jsonify(message)
 
-    return jsonify(message)
+    except PIDDoesNotExistError:
+        msg = _('Cannot retrieve %s record during the update.' % bibid)
+        response = {
+            'content': msg
+        }
+        return jsonify(response), 404
 
+    except Exception:
+        msg = _('An error occured on the server.')
+        response = {
+            'content': msg
+        }
+        return jsonify(response), 500
 
 @blueprint.route("/import/bnf/ean/<int:ean>")
 @record_edit_permission.require()
@@ -225,14 +236,32 @@ def import_bnf_ean(ean):
 
             # convert marc json to local json format
             record = unimarctojson.do(json_data)
-            return jsonify(record)
+            response = {
+                'record': record,
+                'type': 'success',
+                'content': _('The record has been imported.'),
+                'title': _('Success:')
+            }
+            return jsonify(response)
 
     # no record found!
     except StopIteration:
-        abort(404)
+        response = {
+                'record': {},
+                'type': 'warning',
+                'content': _('EAN (%(ean)s) not found on the BNF server', ean=ean),
+                'title': _('Warning:')
+            }
+        return jsonify(response), 404
     # other errors
     except Exception as e:
         import sys
         print(e)
         sys.stdout.flush()
-        abort(500)
+        response = {
+                'record': {},
+                'type': 'danger',
+                'content': _('An error occured on the BNF server.'),
+                'title': _('Error:')
+            }
+        return jsonify(response), 500
