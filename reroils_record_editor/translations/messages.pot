@@ -4,11 +4,12 @@
 # reroils-record-editor project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: reroils-record-editor 0.1.0a5\n"
+"Project-Id-Version: reroils-record-editor 0.1.0a6\n"
 "Report-Msgid-Bugs-To: software@rero.ch\n"
-"POT-Creation-Date: 2017-11-20 09:19+0000\n"
+"POT-Creation-Date: 2017-11-21 14:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,8 +26,52 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: reroils_record_editor/views.py:116 reroils_record_editor/views.py:169
+#: reroils_record_editor/views.py:116
 #, python-format
 msgid "record %s does not exists"
+msgstr ""
+
+#: reroils_record_editor/views.py:189
+#, python-format
+msgid "the record %s has been updated"
+msgstr ""
+
+#: reroils_record_editor/views.py:194
+#, python-format
+msgid "the record %s has been created"
+msgstr ""
+
+#: reroils_record_editor/views.py:200
+#, python-format
+msgid "Cannot retrieve %s record during the update."
+msgstr ""
+
+#: reroils_record_editor/views.py:207
+msgid "An error occured on the server."
+msgstr ""
+
+#: reroils_record_editor/views.py:243
+msgid "The record has been imported."
+msgstr ""
+
+#: reroils_record_editor/views.py:244
+msgid "Success:"
+msgstr ""
+
+#: reroils_record_editor/views.py:253
+#, python-format
+msgid "EAN (%(ean)s) not found on the BNF server"
+msgstr ""
+
+#: reroils_record_editor/views.py:255
+msgid "Warning:"
+msgstr ""
+
+#: reroils_record_editor/views.py:266
+msgid "An error occured on the BNF server."
+msgstr ""
+
+#: reroils_record_editor/views.py:267
+msgid "Error:"
 msgstr ""
 

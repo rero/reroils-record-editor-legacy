@@ -24,6 +24,7 @@ WORKDIR /reroils
 RUN virtualenv reroils
 
 ARG GIT_COMMIT
+
 RUN /reroils/build_app.sh $GIT_COMMIT
 
 CMD  /reroils/reroils/src/reroils-record-editor/development/test.sh

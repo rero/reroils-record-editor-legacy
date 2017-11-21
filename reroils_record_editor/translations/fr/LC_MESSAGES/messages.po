@@ -1,32 +1,77 @@
-# French translations for reroils-record-editor.
+# Translations template for reroils-record-editor.
 # Copyright (C) 2017 RERO
 # This file is distributed under the same license as the
 # reroils-record-editor project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+
 msgid ""
 msgstr ""
-"Project-Id-Version: reroils-record-editor 0.1.0a4\n"
+"Project-Id-Version: reroils-record-editor 0.1.0a6\n"
 "Report-Msgid-Bugs-To: software@rero.ch\n"
-"POT-Creation-Date: 2017-11-20 09:19+0000\n"
+"POT-Creation-Date: 2017-11-21 14:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Johnny Mariéthoz <johnny.mariethoz@rero.ch>, 2017\n"
-"Language: fr\n"
 "Language-Team: French (https://www.transifex.com/rero/teams/77935/fr/)\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.5.1\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: reroils_record_editor/views.py:92
 msgid "Cataloging"
-msgstr "Cataloguage"
+msgstr "Catalogage"
 
 #: reroils_record_editor/views.py:100
 msgid "New"
 msgstr "Nouveau"
 
-#: reroils_record_editor/views.py:116 reroils_record_editor/views.py:169
+#: reroils_record_editor/views.py:116
 #, python-format
 msgid "record %s does not exists"
 msgstr "la notice %s n'existe pas"
+
+#: reroils_record_editor/views.py:189
+#, python-format
+msgid "the record %s has been updated"
+msgstr ""
+
+#: reroils_record_editor/views.py:194
+#, python-format
+msgid "the record %s has been created"
+msgstr ""
+
+#: reroils_record_editor/views.py:200
+#, python-format
+msgid "Cannot retrieve %s record during the update."
+msgstr ""
+
+#: reroils_record_editor/views.py:207
+msgid "An error occured on the server."
+msgstr ""
+
+#: reroils_record_editor/views.py:243
+msgid "The record has been imported."
+msgstr ""
+
+#: reroils_record_editor/views.py:244
+msgid "Success:"
+msgstr ""
+
+#: reroils_record_editor/views.py:253
+#, python-format
+msgid "EAN (%(ean)s) not found on the BNF server"
+msgstr ""
+
+#: reroils_record_editor/views.py:255
+msgid "Warning:"
+msgstr ""
+
+#: reroils_record_editor/views.py:266
+msgid "An error occured on the BNF server."
+msgstr ""
+
+#: reroils_record_editor/views.py:267
+msgid "Error:"
+msgstr ""
