@@ -210,6 +210,7 @@ def save_record():
         }
         return jsonify(response), 500
 
+
 @blueprint.route("/import/bnf/ean/<int:ean>")
 @record_edit_permission.require()
 def import_bnf_ean(ean):
@@ -249,7 +250,8 @@ def import_bnf_ean(ean):
         response = {
                 'record': {},
                 'type': 'warning',
-                'content': _('EAN (%(ean)s) not found on the BNF server', ean=ean),
+                'content': _('EAN (%(ean)s) not found on the BNF server',
+                             ean=ean),
                 'title': _('Warning:')
             }
         return jsonify(response), 404
