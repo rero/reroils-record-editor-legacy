@@ -43,6 +43,7 @@ from flask_menu import current_menu
 from flask_principal import PermissionDenied, RoleNeed
 from invenio_access.permissions import DynamicPermission
 from invenio_db import db
+from invenio_i18n.ext import current_i18n
 from invenio_indexer.api import RecordIndexer
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.resolver import Resolver
@@ -135,6 +136,11 @@ def edit(bibid):
 def new():
     """Edior view for new a record."""
     options = current_app.config['REROILS_RECORD_EDITOR_FORM_OPTIONS']
+    schema = current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
+    lang = current_i18n.language
+    if current_i18n.language in ['fr', 'de']:
+        options = [options[0], options[1].replace('.json', '._%s.json' % lang)]
+        schema = schema.replace('.json', '._%s.json' % lang)
     options_in_bytes = resource_string(*options)
     editor_options = loads(options_in_bytes.decode('utf8'))
     remove_pid(editor_options)
@@ -145,9 +151,7 @@ def new():
         model={'$schema': get_schema_url(
             current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
         )},
-        schema=get_schema(
-            current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
-        )
+        schema=get_schema(schema)
     )
 
 
