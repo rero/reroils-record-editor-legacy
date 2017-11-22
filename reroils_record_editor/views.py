@@ -85,7 +85,7 @@ def can_edit(user=None):
     return user.is_authenticated and record_edit_permission.can()
 
 
-@blueprint.before_app_first_request
+@blueprint.before_app_request
 def init_menu():
     """Initialize menu before first request."""
     item = current_menu.submenu('main.cataloging')
