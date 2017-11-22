@@ -22,9 +22,19 @@
 # In applying this license, RERO does not
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
+set -e
+pydocstyle reroils_record_editor tests docs
+isort -rc -c -df
 
-pydocstyle reroils_record_editor tests docs && \
-isort -rc -c -df && \
-check-manifest --ignore ".travis-*" && \
-sphinx-build -qnNW docs docs/_build/html && \
+set +e
+grep -r fuzzy */translations
+if [ $? -eq 0 ]
+then
+    echo "Error: fuzzy tranlations!"
+    exit 1
+fi
+set -e
+
+check-manifest --ignore ".travis-*"
+sphinx-build -qnNW docs docs/_build/html
 python setup.py test
