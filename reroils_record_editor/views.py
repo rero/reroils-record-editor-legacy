@@ -115,7 +115,7 @@ def edit(bibid):
     try:
         pid, model = resolver.resolve(bibid)
     except PIDDoesNotExistError:
-        flash(_('record %s does not exists' % bibid), 'danger')
+        flash(_('The record %s does not exists.' % bibid), 'danger')
         abort(404)
 
     options = current_app.config['REROILS_RECORD_EDITOR_FORM_OPTIONS']
@@ -156,13 +156,13 @@ def delete(bibid):
         pid.delete()
         db.session.commit()
     except PIDDoesNotExistError:
-        flash(_('record %s does not exists' % bibid), 'danger')
+        flash(_('The record %s does not exists.' % bibid), 'danger')
         abort(404)
     except Exception:
         flash(_('An error occured on the server.'), 'danger')
         abort(500)
 
-    flash(_('record %s has been deleted' % bibid), 'success')
+    flash(_('The record %s has been deleted.' % bibid), 'success')
 
     return redirect(url_for('invenio_search_ui.search'))
 
@@ -226,12 +226,12 @@ def save_record():
         }
         if bibid:
             flash(
-                _('the record %s has been updated' % pid.pid_value),
+                _('The record %s has been updated.' % pid.pid_value),
                 'success'
             )
         else:
             flash(
-                _('the record %s has been created' % pid.pid_value),
+                _('The record %s has been created.' % pid.pid_value),
                 'success'
             )
         return jsonify(message)
@@ -290,7 +290,7 @@ def import_bnf_ean(ean):
         response = {
                 'record': {},
                 'type': 'warning',
-                'content': _('EAN (%(ean)s) not found on the BNF server',
+                'content': _('EAN (%(ean)s) not found on the BNF server.',
                              ean=ean),
                 'title': _('Warning:')
             }
