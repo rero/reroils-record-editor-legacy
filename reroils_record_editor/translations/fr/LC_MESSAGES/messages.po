@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the
 # reroils-record-editor project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+
 msgid ""
 msgstr ""
 "Project-Id-Version: reroils-record-editor 0.1.0a7\n"
@@ -43,7 +44,7 @@ msgstr "La notice %s a été supprimée."
 #: reroils_record_editor/views.py:229
 #, python-format
 msgid "The record %s has been updated."
-msgstr "La notice %s a été mise à jour."
+msgstr "La notice %s a été modifiée."
 
 #: reroils_record_editor/views.py:234
 #, python-format
@@ -53,7 +54,7 @@ msgstr "La notice %s a été créée."
 #: reroils_record_editor/views.py:240
 #, python-format
 msgid "Cannot retrieve %s record during the update."
-msgstr "La notice %s n'a pas pu être trouvée lors de sa mise à jour."
+msgstr "La notice %s n'a pas pu être trouvée lors de sa modification."
 
 #: reroils_record_editor/views.py:283
 msgid "The record has been imported."

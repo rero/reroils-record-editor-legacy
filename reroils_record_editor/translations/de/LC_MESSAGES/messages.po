@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the
 # reroils-record-editor project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+
 msgid ""
 msgstr ""
 "Project-Id-Version: reroils-record-editor 0.1.0a7\n"
@@ -66,7 +67,7 @@ msgstr "Erfolgreich:"
 #: reroils_record_editor/views.py:293
 #, python-format
 msgid "EAN (%(ean)s) not found on the BNF server."
-msgstr "EAN (%(ean)s) nicht gefunden auf BNF-Server."
+msgstr "EAN (%(ean)s) auf dem BNF-Server nicht gefunden."
 
 #: reroils_record_editor/views.py:295
 msgid "Warning:"
