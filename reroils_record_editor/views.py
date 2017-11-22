@@ -118,6 +118,11 @@ def edit(bibid):
         abort(404)
 
     options = current_app.config['REROILS_RECORD_EDITOR_FORM_OPTIONS']
+    schema = current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
+    lang = current_i18n.language
+    if current_i18n.language in ['fr', 'de']:
+        options = [options[0], options[1].replace('.json', '._%s.json' % lang)]
+        schema = schema.replace('.json', '._%s.json' % lang)
     options_in_bytes = resource_string(*options)
     editor_options = loads(options_in_bytes.decode('utf8'))
 
@@ -126,7 +131,7 @@ def edit(bibid):
         form=editor_options,
         model=model,
         schema=get_schema(
-            current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
+            schema
         )
     )
 
