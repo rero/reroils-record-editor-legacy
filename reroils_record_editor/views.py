@@ -35,6 +35,7 @@ from urllib.request import urlopen
 
 import six
 from dojson.contrib.marc21.utils import create_record, split_stream
+from elasticsearch.exceptions import NotFoundError
 from flask import Blueprint, abort, current_app, flash, jsonify, redirect, \
     render_template, request, url_for
 from flask_babelex import gettext as _
@@ -134,6 +135,36 @@ def edit(bibid):
             schema
         )
     )
+
+
+@blueprint.route("/delete/records/<bibid>")
+@record_edit_permission.require()
+def delete(bibid):
+    """Remove a record.
+
+    TODO: remove items also
+    """
+    resolver = Resolver(pid_type='recid',
+                        object_type='rec',
+                        getter=Record.get_record)
+    record_indexer = RecordIndexer()
+    try:
+        pid, record = resolver.resolve(bibid)
+        record_indexer.delete(record)
+        record_indexer.client.indices.flush()
+        record.delete()
+        pid.delete()
+        db.session.commit()
+    except PIDDoesNotExistError:
+        flash(_('record %s does not exists' % bibid), 'danger')
+        abort(404)
+    except Exception:
+        flash(_('An error occured on the server.'), 'danger')
+        abort(500)
+
+    flash(_('record %s has been deleted' % bibid), 'success')
+
+    return redirect(url_for('invenio_search_ui.search'))
 
 
 @blueprint.route("/new")
