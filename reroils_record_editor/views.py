@@ -121,7 +121,7 @@ def edit(bibid):
     options = current_app.config['REROILS_RECORD_EDITOR_FORM_OPTIONS']
     schema = current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
     lang = current_i18n.language
-    if current_i18n.language in ['fr', 'de']:
+    if current_i18n.language in ['fr', 'de', 'it']:
         options = [options[0], options[1].replace('.json', '._%s.json' % lang)]
         schema = schema.replace('.json', '._%s.json' % lang)
     options_in_bytes = resource_string(*options)
@@ -174,7 +174,7 @@ def new():
     options = current_app.config['REROILS_RECORD_EDITOR_FORM_OPTIONS']
     schema = current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
     lang = current_i18n.language
-    if current_i18n.language in ['fr', 'de']:
+    if current_i18n.language in ['fr', 'de', 'it']:
         options = [options[0], options[1].replace('.json', '._%s.json' % lang)]
         schema = schema.replace('.json', '._%s.json' % lang)
     options_in_bytes = resource_string(*options)
