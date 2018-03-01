@@ -29,7 +29,8 @@ from __future__ import absolute_import, print_function
 from flask_babelex import gettext as _
 
 from . import config
-from .views import blueprint
+# from .views import blueprint
+from .views import create_blueprint
 
 
 class ReroilsRecordEditor(object):
@@ -46,7 +47,8 @@ class ReroilsRecordEditor(object):
     def init_app(self, app):
         """Flask application initialization."""
         self.init_config(app)
-        app.register_blueprint(blueprint)
+        opt = app.config['REROILS_RECORD_EDITOR_OPTIONS']
+        app.register_blueprint(create_blueprint(opt))
         app.extensions['reroils-record-editor'] = self
 
     def init_config(self, app):

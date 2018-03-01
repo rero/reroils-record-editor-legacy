@@ -4,12 +4,13 @@
 <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h1>Record Editor</h1>
+        <h1>{{_(record_type)}} {{_('Editor')}}</h1>
         <reroils-editor id="reroils-editor" ng-controller="FormController">
             <ng-initial
-                form='{{ form | tojson }}'
+                form='{{ form | jsondumps }}'
                 model='{{ model | tojson }}'
                 schema='{{ schema | tojson }}'
+                api_save_url='{{ api_save_url }}'
             ></ng-initial>
             <alert></alert>
             <form name="recordEditor" ng-submit="onSubmit(recordEditor)">

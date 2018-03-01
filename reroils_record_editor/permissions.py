@@ -22,27 +22,18 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""reroils record editor."""
+"""Permission for this module."""
 
-REROILS_RECORD_EDITOR_BASE_TEMPLATE = 'reroils_record_editor/base.html'
-"""Default base template for the demo page."""
 
-REROILS_RECORD_EDITOR_EDITOR_TEMPLATE = 'reroils_record_editor/editor.html'
-"""Default editor template."""
+from flask_login import current_user
+from flask_principal import PermissionDenied, RoleNeed
+from invenio_access.permissions import DynamicPermission
 
-REROILS_RECORD_EDITOR_OPTIONS = dict(
-    recid=dict(
-        api='/api/records',
-        search_template='reroils_record_editor/search.html',
-        results_template='templates/invenio_search_ui/marc21/default.html',
-        schema='records/record-v0.0.1.json'
-        # form_options=('reroils_record_editor.form_options',
-        #               'records/record-v0.0.1.json'),
-        # form_options_create_exclude=['controll']
-    )
-)
+record_edit_permission = DynamicPermission(RoleNeed('cataloguer'))
 
-REROILS_RECORD_EDITOR_TRANSLATE_JSON_KEYS = [
-    'title', 'description',
-    'validationMessage', 'placeholder'
-]
+
+def can_edit(user=None):
+    """User has editor role."""
+    if not user:
+        user = current_user
+    return user.is_authenticated and record_edit_permission.can()

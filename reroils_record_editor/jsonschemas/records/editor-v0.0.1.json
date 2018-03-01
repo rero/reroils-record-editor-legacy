@@ -2,6 +2,11 @@
   "type": "object",
   "title": "Comment",
   "properties": {
+    "id":  {
+      "title": "Persistent Identifier",
+      "type": "string",
+      "minLength": 1
+    },
     "name":  {
       "title": "Name",
       "type": "string",

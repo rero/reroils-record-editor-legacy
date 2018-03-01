@@ -1,14 +1,14 @@
 # English translations for reroils-record-editor.
-# Copyright (C) 2017 RERO
+# Copyright (C) 2018 RERO
 # This file is distributed under the same license as the
 # reroils-record-editor project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: reroils-record-editor 0.1.0a7\n"
+"Project-Id-Version: reroils-record-editor 0.1.0a9\n"
 "Report-Msgid-Bugs-To: software@rero.ch\n"
-"POT-Creation-Date: 2017-11-22 09:49+0000\n"
+"POT-Creation-Date: 2018-03-08 08:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -17,82 +17,103 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.1\n"
+"Generated-By: Babel 2.5.3\n"
 
-#: reroils_record_editor/views.py:94
-msgid "Cataloging"
-msgstr ""
-
-#: reroils_record_editor/views.py:102
-msgid "New"
-msgstr ""
-
-#: reroils_record_editor/views.py:118 reroils_record_editor/views.py:159
+#: reroils_record_editor/views.py:114 reroils_record_editor/views.py:144
 #, python-format
 msgid "The record %s does not exists."
 msgstr ""
 
-#: reroils_record_editor/views.py:162 reroils_record_editor/views.py:247
+#: reroils_record_editor/views.py:147 reroils_record_editor/views.py:215
 msgid "An error occured on the server."
 msgstr ""
 
-#: reroils_record_editor/views.py:165
+#: reroils_record_editor/views.py:150
 #, python-format
 msgid "The record %s has been deleted."
 msgstr ""
 
-#: reroils_record_editor/views.py:229
+#: reroils_record_editor/views.py:198
 #, python-format
 msgid "The record %s has been updated."
 msgstr ""
 
-#: reroils_record_editor/views.py:234
+#: reroils_record_editor/views.py:203
 #, python-format
 msgid "The record %s has been created."
 msgstr ""
 
-#: reroils_record_editor/views.py:240
+#: reroils_record_editor/views.py:208
 #, python-format
 msgid "Cannot retrieve %s record during the update."
 msgstr ""
 
-#: reroils_record_editor/views.py:283
-msgid "The record has been imported."
+#: reroils_record_editor/views.py:241
+msgid "Manage"
 msgstr ""
 
-#: reroils_record_editor/views.py:284
-msgid "Success:"
+#: reroils_record_editor/form_options/records/editor-v0.0.1.json:4
+msgid "Identifiers"
 msgstr ""
 
-#: reroils_record_editor/views.py:293
-#, python-format
-msgid "EAN (%(ean)s) not found on the BNF server."
+#: reroils_record_editor/form_options/records/editor-v0.0.1.json:13
+msgid "id"
 msgstr ""
 
-#: reroils_record_editor/views.py:295
-msgid "Warning:"
+#: reroils_record_editor/form_options/records/editor-v0.0.1.json:14
+msgid "Persistent identifier, automatically generated."
 msgstr ""
 
-#: reroils_record_editor/views.py:306
-msgid "An error occured on the BNF server."
+#: reroils_record_editor/form_options/records/editor-v0.0.1.json:25
+msgid "Make a comment"
 msgstr ""
 
-#: reroils_record_editor/views.py:307
-msgid "Error:"
+#: reroils_record_editor/form_options/records/editor-v0.0.1.json:30
+msgid "Ok"
 msgstr ""
 
-#~ msgid "record %s does not exists"
-#~ msgstr ""
+#: reroils_record_editor/form_options/records/editor-v0.0.1.json:31
+msgid "Cancel"
+msgstr ""
 
-#~ msgid "record %s has been deleted"
-#~ msgstr ""
+#: reroils_record_editor/jsonschemas/records/editor-v0.0.1.json:3
+#: reroils_record_editor/jsonschemas/records/editor-v0.0.1.json:22
+msgid "Comment"
+msgstr ""
 
-#~ msgid "the record %s has been updated"
-#~ msgstr ""
+#: reroils_record_editor/jsonschemas/records/editor-v0.0.1.json:6
+msgid "Persistent Identifier"
+msgstr ""
 
-#~ msgid "the record %s has been created"
-#~ msgstr ""
+#: reroils_record_editor/jsonschemas/records/editor-v0.0.1.json:11
+msgid "Name"
+msgstr ""
 
-#~ msgid "EAN (%(ean)s) not found on the BNF server"
-#~ msgstr ""
+#: reroils_record_editor/jsonschemas/records/editor-v0.0.1.json:16
+msgid "Email"
+msgstr ""
+
+#: reroils_record_editor/jsonschemas/records/editor-v0.0.1.json:19
+msgid "Email will be used for evil."
+msgstr ""
+
+#: reroils_record_editor/jsonschemas/records/editor-v0.0.1.json:25
+msgid "Don't be greedy!"
+msgstr ""
+
+#: reroils_record_editor/templates/reroils_record_editor/editor.html:7
+msgid "Editor"
+msgstr ""
+
+#: reroils_record_editor/templates/reroils_record_editor/search.html:86
+msgid "Create"
+msgstr ""
+
+#: reroils_record_editor/templates/reroils_record_editor/search.html:98
+msgid "Search failed."
+msgstr ""
+
+#: reroils_record_editor/templates/reroils_record_editor/search.html:104
+msgid "Loading..."
+msgstr ""
 

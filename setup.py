@@ -120,6 +120,9 @@ setup(
         'invenio_jsonschemas.schemas': [
             'record_editor = reroils_record_editor.jsonschemas'
         ],
+        'babel.extractors': [
+            'json = reroils_record_editor.babel_extractors:extract_json'
+        ]
         # TODO: Edit these entry points to fit your needs.
         # 'invenio_access.actions': [],
         # 'invenio_admin.actions': [],

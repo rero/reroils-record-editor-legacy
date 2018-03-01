@@ -4,7 +4,8 @@ angular.module('reroilseditor', ['schemaForm'])
         $scope.params = {
             form: ["*"],
             model: {},
-            schema: {}
+            schema: {},
+            api_save_url: ''
         };
 
         $scope.message = {
@@ -13,10 +14,11 @@ angular.module('reroilseditor', ['schemaForm'])
             type: ""
         };
 
-        function editorInit(init, form, schema, model) {
+        function editorInit(init, form, schema, model, api_save_url) {
             $scope.params.schema = angular.fromJson(schema);
             $scope.params.model = angular.fromJson(model);
             $scope.params.form = angular.fromJson(form);
+            $scope.params.api_save_url = api_save_url;
         };
 
         $scope.$on('edit.init', editorInit);
@@ -51,15 +53,15 @@ angular.module('reroilseditor', ['schemaForm'])
         $scope.onSubmit = function(form) {
             // First we broadcast an event so all fields validate themselves
             $scope.$broadcast('schemaFormValidate');
-
+            console.log(form.$valid);
             // Then we check if the form is valid
             if (form.$valid) {
                 $http({
                         method: 'POST',
                         data: $scope.params.model,
-                        url: '/editor/records/save'
+                        url: $scope.params.api_save_url
                     }).then(function successCallback(response) {
-                        $window.location.href = '/records/' + response.data.pid;
+                        $window.location.href = response.data.next;
                     }, function errorCallback(response) {
                         $scope.message.type = 'danger';
                         $scope.message.content = response.data.content;
@@ -76,7 +78,7 @@ angular.module('reroilseditor', ['schemaForm'])
             controller: 'FormController',
             link: function (scope, element, attrs) {
                 scope.$broadcast(
-                    'edit.init', attrs.form, attrs.schema, attrs.model
+                    'edit.init', attrs.form, attrs.schema, attrs.model, attrs.apiSaveUrl
                 );
             }
         }

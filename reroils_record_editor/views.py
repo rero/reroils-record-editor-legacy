@@ -24,196 +24,164 @@
 
 """reroils record editor."""
 
-# TODO: This is an example file. Remove it if you do not need it, including
-# the templates and static folders as well as the test case.
-
-from __future__ import absolute_import, print_function
 
 import uuid
-from json import loads
-from urllib.request import urlopen
+from functools import partial
+from json import dumps, loads
 
-import six
-from dojson.contrib.marc21.utils import create_record, split_stream
-from elasticsearch.exceptions import NotFoundError
 from flask import Blueprint, abort, current_app, flash, jsonify, redirect, \
     render_template, request, url_for
 from flask_babelex import gettext as _
 from flask_login import current_user
 from flask_menu import current_menu
-from flask_principal import PermissionDenied, RoleNeed
-from invenio_access.permissions import DynamicPermission
+from flask_principal import PermissionDenied
 from invenio_db import db
-from invenio_i18n.ext import current_i18n
 from invenio_indexer.api import RecordIndexer
+from invenio_pidstore import current_pidstore
 from invenio_pidstore.errors import PIDDoesNotExistError
-from invenio_pidstore.resolver import Resolver
 from invenio_records.api import Record
 from pkg_resources import resource_string
-from reroils_data import minters
-from reroils_data.dojson.contrib.unimarctojson import unimarctojson
-from reroils_data.utils import clean_dict_keys, remove_pid
 
-from .utils import get_schema, get_schema_url
-
-blueprint = Blueprint(
-    'reroils_record_editor',
-    __name__,
-    template_folder='templates',
-    static_folder='static',
-    url_prefix='/editor'
-)
-
-record_edit_permission = DynamicPermission(RoleNeed('cataloguer'))
+from .babel_extractors import translate
+from .permissions import can_edit, record_edit_permission
+from .utils import clean_dict_keys, get_schema, get_schema_url, remove_pid, \
+    resolve
 
 
-@blueprint.errorhandler(PermissionDenied)
-def permission_denied_page(error):
-    """Show a personalized error message."""
-    if not current_user.is_authenticated:
-        return redirect(url_for(
-                    current_app.config['ADMIN_LOGIN_ENDPOINT'],
-                    next=request.url))
-    return render_template(current_app.config['THEME_403_TEMPLATE']), 403
-
-
-@blueprint.app_template_filter()
-def can_edit(user=None):
-    """User has editor role."""
-    if not user:
-        user = current_user
-    return user.is_authenticated and record_edit_permission.can()
-
-
-@blueprint.before_app_request
-def init_menu():
-    """Initialize menu before first request."""
-    item = current_menu.submenu('main.cataloging')
-    item.register(
-        endpoint=None,
-        text=_('Cataloging'),
-        visible_when=can_edit,
-        order=0
-    )
-
-    subitem = current_menu.submenu('main.cataloging.new')
-    subitem.register(
-        endpoint='reroils_record_editor.new',
-        text='<i class="fa fa-pencil-square-o fa-fw"></i> %s' % _('New'),
-        visible_when=can_edit,
-        order=0
-    )
-
-
-@blueprint.route("/edit/<int:bibid>")
 @record_edit_permission.require()
-def edit(bibid):
-    """Edior view to update an existing record."""
-    resolver = Resolver(pid_type='recid',
-                        object_type='rec',
-                        getter=Record.get_record)
-    try:
-        pid, model = resolver.resolve(bibid)
-    except PIDDoesNotExistError:
-        flash(_('The record %s does not exists.' % bibid), 'danger')
+def search(record_type, endpoints):
+    """Create a search view given a record type."""
+    cfg = endpoints.get(record_type)
+    if not cfg or not cfg.get('api'):
+        abort(404)
+    template = cfg.get('template')
+    api = cfg.get('api')
+    results_template = cfg.get('results_template')
+    res_tmpl = url_for('static',
+                       filename=results_template)
+    return render_template(template, search_api=api,
+                           record_type=record_type,
+                           search_results_template=res_tmpl)
+
+
+@record_edit_permission.require()
+def create(record_type, endpoints):
+    """Editor view for a new record for a given record type."""
+    cfg = endpoints.get(record_type)
+    schema = cfg.get('schema')
+    if not cfg or not schema:
         abort(404)
 
-    options = current_app.config['REROILS_RECORD_EDITOR_FORM_OPTIONS']
-    schema = current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
-    lang = current_i18n.language
-    if current_i18n.language in ['fr', 'de', 'it']:
-        options = [options[0], options[1].replace('.json', '._%s.json' % lang)]
-        schema = schema.replace('.json', '._%s.json' % lang)
-    options_in_bytes = resource_string(*options)
-    editor_options = loads(options_in_bytes.decode('utf8'))
+    form_options = cfg.get('form_options')
+    schema_url = get_schema_url(schema)
 
+    if form_options:
+        options_in_bytes = resource_string(*form_options)
+        form_options = loads(options_in_bytes.decode('utf8'))
+
+    for key_to_remove in cfg.get('form_options_create_exclude', []):
+        remove_pid(form_options, key_to_remove)
+    keys = current_app.config['REROILS_RECORD_EDITOR_TRANSLATE_JSON_KEYS']
+    form_options = translate(form_options, keys=keys)
     return render_template(
-        "reroils_record_editor/index.html",
-        form=editor_options,
-        model=model,
-        schema=get_schema(
-            schema
-        )
+        current_app.config['REROILS_RECORD_EDITOR_EDITOR_TEMPLATE'],
+        form=form_options or ['*'],
+        model={'$schema': schema_url},
+        schema=get_schema(schema),
+        api_save_url='/editor/save/%s' % record_type,
+        record_type=record_type
     )
 
 
-@blueprint.route("/delete/records/<bibid>")
 @record_edit_permission.require()
-def delete(bibid):
+def update(record_type, pid, endpoints):
+    """Edior view to update an existing record."""
+    cfg = endpoints.get(record_type)
+    schema = cfg.get('schema')
+    if not cfg or not schema:
+        abort(404)
+
+    form_options = cfg.get('form_options')
+    schema_url = get_schema_url(schema)
+
+    if form_options:
+        options_in_bytes = resource_string(*form_options)
+        form_options = loads(options_in_bytes.decode('utf8'))
+
+    try:
+        pid, rec = resolve(record_type, pid)
+    except PIDDoesNotExistError:
+        flash(_('The record %s does not exists.' % pid), 'danger')
+        abort(404)
+
+    keys = current_app.config['REROILS_RECORD_EDITOR_TRANSLATE_JSON_KEYS']
+    form_options = translate(form_options, keys=keys)
+    return render_template(
+        current_app.config['REROILS_RECORD_EDITOR_EDITOR_TEMPLATE'],
+        form=form_options,
+        model=rec,
+        schema=get_schema(schema),
+        api_save_url='/editor/save/%s' % record_type,
+        record_type=record_type
+    )
+
+
+@record_edit_permission.require()
+def delete(record_type, pid, endpoints):
     """Remove a record.
 
     TODO: remove items also
     """
-    resolver = Resolver(pid_type='recid',
-                        object_type='rec',
-                        getter=Record.get_record)
     record_indexer = RecordIndexer()
     try:
-        pid, record = resolver.resolve(bibid)
+        pid, record = resolve(record_type, pid)
         record_indexer.delete(record)
         record_indexer.client.indices.flush()
         record.delete()
         pid.delete()
         db.session.commit()
     except PIDDoesNotExistError:
-        flash(_('The record %s does not exists.' % bibid), 'danger')
+        flash(_('The record %s does not exists.' % pid.pid_value), 'danger')
         abort(404)
-    except Exception:
+    except Exception as e:
         flash(_('An error occured on the server.'), 'danger')
         abort(500)
 
-    flash(_('The record %s has been deleted.' % bibid), 'success')
+    flash(_('The record %s has been deleted.' % pid.pid_value), 'success')
 
     return redirect(url_for('invenio_search_ui.search'))
 
 
-@blueprint.route("/new")
 @record_edit_permission.require()
-def new():
-    """Edior view for new a record."""
-    options = current_app.config['REROILS_RECORD_EDITOR_FORM_OPTIONS']
-    schema = current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
-    lang = current_i18n.language
-    if current_i18n.language in ['fr', 'de', 'it']:
-        options = [options[0], options[1].replace('.json', '._%s.json' % lang)]
-        schema = schema.replace('.json', '._%s.json' % lang)
-    options_in_bytes = resource_string(*options)
-    editor_options = loads(options_in_bytes.decode('utf8'))
-    remove_pid(editor_options)
+def save(record_type):
+    """Save record in the db and reindex it."""
+    config = current_app.config['RECORDS_REST_ENDPOINTS']
+    config = config.get(record_type, {})
 
-    return render_template(
-        "reroils_record_editor/index.html",
-        form=editor_options,
-        model={'$schema': get_schema_url(
-            current_app.config['REROILS_RECORD_EDITOR_JSONSCHEMA']
-        )},
-        schema=get_schema(schema)
-    )
-
-
-@blueprint.route("/records/save", methods=['POST'])
-@record_edit_permission.require()
-def save_record():
-    """Save record."""
+    def get_pid(record_type, config):
+        pid_fetcher = config.get('pid_fetcher')
+        fetcher = current_pidstore.fetchers[pid_fetcher]
+        try:
+            pid_value = fetcher(None, record).pid_value
+        except KeyError:
+            return None
+        return pid_value
     try:
         # load and clean dirty data provided by angular-schema-form
         record = clean_dict_keys(request.get_json())
-        bibid = record.get('bibid')
-
+        pid_value = get_pid(record_type, config)
         # update an existing record
-        if bibid:
-            resolver = Resolver(pid_type='recid',
-                                object_type='rec',
-                                getter=Record.get_record)
-            pid, rec = resolver.resolve(bibid)
-
+        if pid_value:
+            pid, rec = resolve(record_type, pid_value)
             rec.update(record)
             rec.commit()
         # create a new record
         else:
             # generate bibid
             uid = uuid.uuid4()
-            pid = minters.bibid_minter(uid, record)
+            pid_minter = config.get('pid_minter')
+            minter = current_pidstore.minters[pid_minter]
+            pid = minter(uid, record)
             # create a new record
             rec = Record.create(record, id_=uid)
 
@@ -222,9 +190,10 @@ def save_record():
         record_indexer = RecordIndexer()
         record_indexer.index(rec)
         message = {
-                "pid": pid.pid_value
+            'pid': pid.pid_value,
+            'next': '/'
         }
-        if bibid:
+        if pid_value:
             flash(
                 _('The record %s has been updated.' % pid.pid_value),
                 'success'
@@ -235,15 +204,14 @@ def save_record():
                 'success'
             )
         return jsonify(message)
-
     except PIDDoesNotExistError:
-        msg = _('Cannot retrieve %s record during the update.' % bibid)
+        msg = _('Cannot retrieve %s record during the update.' % pid_value)
         response = {
             'content': msg
         }
         return jsonify(response), 404
 
-    except Exception:
+    except Exception as e:
         msg = _('An error occured on the server.')
         response = {
             'content': msg
@@ -251,59 +219,101 @@ def save_record():
         return jsonify(response), 500
 
 
-@blueprint.route("/import/bnf/ean/<int:ean>")
-@record_edit_permission.require()
-def import_bnf_ean(ean):
-    """Import record from BNFr given a isbn 13 without dashes."""
-    bnf_url = current_app.config['REROILS_RECORD_EDITOR_IMPORT_BNF_EAN']
-    try:
-        with urlopen(bnf_url % ean) as response:
-            if response.status != 200:
-                abort(500)
-            # read the xml date from the HTTP response
-            xml_data = response.read()
+def jsondumps(data):
+    """Override the default tojson filter to avoid escape simple quote."""
+    return dumps(data, indent=4)
 
-            # create a xml file in memory
-            xml_file = six.BytesIO()
-            xml_file.write(xml_data)
-            xml_file.seek(0)
 
-            # get the record in xml if exists
-            # note: the request should returns one record max
-            xml_record = next(split_stream(xml_file))
+def permission_denied_page(error):
+    """Show a personalized error message."""
+    if not current_user.is_authenticated:
+        return redirect(url_for(
+                    current_app.config['ADMIN_LOGIN_ENDPOINT'],
+                    next=request.url))
+    return render_template(current_app.config['THEME_403_TEMPLATE']), 403
 
-            # convert xml in marc json
-            json_data = create_record(xml_record)
 
-            # convert marc json to local json format
-            record = unimarctojson.do(json_data)
-            response = {
-                'record': record,
-                'type': 'success',
-                'content': _('The record has been imported.'),
-                'title': _('Success:')
-            }
-            return jsonify(response)
+def init_menu(endpoints):
+    """Initialize menu before first request."""
+    item = current_menu.submenu('main.manage')
+    item.register(
+        endpoint=None,
+        text=_('Manage'),
+        visible_when=can_edit,
+        order=0
+    )
+    for record_type in endpoints.keys():
+        subitem = current_menu.submenu('main.manage.%s' % record_type)
+        icon = '<i class="fa fa-pencil-square-o fa-fw"></i> '
+        subitem.register(
+            endpoint='reroils_record_editor.search_%s' % record_type,
+            text=icon + _(record_type),
+            visible_when=can_edit
+        )
 
-    # no record found!
-    except StopIteration:
-        response = {
-                'record': {},
-                'type': 'warning',
-                'content': _('EAN (%(ean)s) not found on the BNF server.',
-                             ean=ean),
-                'title': _('Warning:')
-            }
-        return jsonify(response), 404
-    # other errors
-    except Exception as e:
-        import sys
-        print(e)
-        sys.stdout.flush()
-        response = {
-                'record': {},
-                'type': 'danger',
-                'content': _('An error occured on the BNF server.'),
-                'title': _('Error:')
-            }
-        return jsonify(response), 500
+
+def create_blueprint(endpoints):
+    """Create Invenio-Records-REST blueprint.
+
+    :params endpoints: Dictionary representing the endpoints configuration.
+    :returns: Configured blueprint.
+    """
+    endpoints = endpoints or {}
+
+    blueprint = Blueprint(
+        'reroils_record_editor',
+        __name__,
+        template_folder='templates',
+        static_folder='static',
+        url_prefix='/editor',
+    )
+    rec_types = endpoints.keys()
+    blueprint.add_app_template_filter(can_edit)
+    blueprint.add_app_template_filter(jsondumps)
+    blueprint.register_error_handler(PermissionDenied,
+                                     permission_denied_page)
+    menu_func = partial(init_menu, endpoints=endpoints)
+    menu_func.__module__ = init_menu.__module__
+    menu_func.__name__ = init_menu.__name__
+    blueprint.before_app_request(menu_func)
+    for rec_type in rec_types:
+        # search view
+        search_func = partial(search, record_type=rec_type,
+                              endpoints=endpoints)
+        search_func.__module__ = search.__module__
+        search_func.__name__ = search.__name__
+        blueprint.add_url_rule('/search/%s' % rec_type,
+                               endpoint='search_%s' % rec_type,
+                               view_func=search_func)
+        # create view
+        create_func = partial(create, record_type=rec_type,
+                              endpoints=endpoints)
+        create_func.__module__ = create.__module__
+        create_func.__name__ = create.__name__
+        blueprint.add_url_rule('/create/%s' % rec_type,
+                               endpoint='create_%s' % rec_type,
+                               view_func=create_func)
+        # update view
+        update_func = partial(update, record_type=rec_type,
+                              endpoints=endpoints)
+        update_func.__module__ = update.__module__
+        update_func.__name__ = update.__name__
+        blueprint.add_url_rule('/update/%s/<int:pid>' % rec_type,
+                               endpoint='update_%s' % rec_type,
+                               view_func=update_func)
+        # delete view
+        delete_func = partial(delete, record_type=rec_type,
+                              endpoints=endpoints)
+        delete_func.__module__ = delete.__module__
+        delete_func.__name__ = delete.__name__
+        blueprint.add_url_rule('/delete/%s/<int:pid>' % rec_type,
+                               endpoint='delete_%s' % rec_type,
+                               view_func=delete_func)
+        # save api
+        save_func = partial(save, record_type=rec_type)
+        save_func.__module__ = save.__module__
+        save_func.__name__ = save.__name__
+        blueprint.add_url_rule('/save/%s' % rec_type,
+                               endpoint='save_%s' % rec_type,
+                               view_func=save_func, methods=['POST'])
+    return blueprint
