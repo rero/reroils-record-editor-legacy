@@ -4,11 +4,15 @@
 # reroils-record-editor project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
+# Translators:
+# iGor milhit <igor.milhit@rero.ch>, 2017
+# Johnny Mariéthoz <johnny.mariethoz@rero.ch>, 2017
+# Nicolas Labat <n-labat@hotmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: reroils-record-editor 0.1.0a9\n"
 "Report-Msgid-Bugs-To: software@rero.ch\n"
-"POT-Creation-Date: 2018-03-08 08:24+0100\n"
+"POT-Creation-Date: 2018-03-08 20:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Nicolas Labat <n-labat@hotmail.com>, 2018\n"
 "Language: fr\n"

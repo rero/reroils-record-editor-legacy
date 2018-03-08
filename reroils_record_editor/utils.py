@@ -15,6 +15,7 @@ def get_schema(schema):
     """Return jsonschemas dictionary."""
     ext = current_app.extensions.get('invenio-jsonschemas')
     keys = current_app.config['REROILS_RECORD_EDITOR_TRANSLATE_JSON_KEYS']
+    ext.get_schema.cache_clear()
     return translate(ext.get_schema(schema), keys=keys)
 
 
