@@ -16,7 +16,9 @@ def get_schema(schema):
     ext = current_app.extensions.get('invenio-jsonschemas')
     keys = current_app.config['REROILS_RECORD_EDITOR_TRANSLATE_JSON_KEYS']
     ext.get_schema.cache_clear()
-    return translate(ext.get_schema(schema), keys=keys)
+    sc = ext.get_schema(schema)
+    del(sc['$schema'])
+    return translate(sc, keys=keys)
 
 
 def get_schema_url(schema):

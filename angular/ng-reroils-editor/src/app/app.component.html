@@ -1,0 +1,20 @@
+<!--The content below is only a placeholder and can be replaced.-->
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-sm-12 col-md-8">
+      <json-schema-form
+        [schema]="schema"
+        [data]="model"
+        [form]="form"
+        [debug]="true"
+        (onSubmit)="exampleOnSubmitFn($event)">
+      </json-schema-form>
+      <h4>Submitted data:</h4>
+      <pre *ngIf="!displayData">(none)</pre>
+      <pre *ngIf="displayData">{{displayData | json}}</pre>
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+</div>

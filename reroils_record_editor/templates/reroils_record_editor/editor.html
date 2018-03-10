@@ -5,36 +5,24 @@
     <div class="row">
       <div class="col-md-12">
         <h1>{{_(record_type)}} {{_('Editor')}}</h1>
-        <reroils-editor id="reroils-editor" ng-controller="FormController">
-            <ng-initial
-                form='{{ form | jsondumps }}'
-                model='{{ model | tojson }}'
-                schema='{{ schema | tojson }}'
-                api_save_url='{{ api_save_url }}'
-            ></ng-initial>
-            <alert></alert>
-            <form name="recordEditor" ng-submit="onSubmit(recordEditor)">
-                <div class="container">
-                    <div class="row">
-                        <div sf-schema="params.schema" sf-form="params.form" sf-model="params.model"></div>
-                    </div>
-                </div>
-            </form>
-        </reroils-editor>
+        <rero-editor
+            form='{{ form | jsondumps }}'
+            model='{{ model | tojson }}'
+            schema='{{ schema | tojson }}'
+            url_api='{{ url_api }}'
+            record_type='{{record_type}}'
+            >
+        </rero-editor>
       </div>
     </div>
 </div>
 {%- endblock %}
 
 {%- block javascript %}
-
-
-<script type="text/javascript" src="/static/node_modules/angular/angular.min.js"></script>
-<script type="text/javascript" src="/static/node_modules/angular-sanitize/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="/static/node_modules/tv4/tv4.js"></script>
-<script type="text/javascript" src="/static/node_modules/objectpath/lib/ObjectPath.js"></script>
-<script type="text/javascript" src="/static/node_modules/angular-schema-form/dist/schema-form.min.js"></script>
-<script type="text/javascript" src="/static/node_modules/angular-schema-form/dist/bootstrap-decorator.min.js"></script>
-<script type="text/javascript" src="/static/js/reroils-editor.js"></script>
+<script type="text/javascript" src="/static/js/reroils_record_editor/inline.bundle.js"></script>
+<script type="text/javascript" src="/static/js/reroils_record_editor/polyfills.bundle.js"></script>
+<script type="text/javascript" src="/static/js/reroils_record_editor/styles.bundle.js"></script>
+<script type="text/javascript" src="/static/js/reroils_record_editor/vendor.bundle.js"></script>
+<script type="text/javascript" src="/static/js/reroils_record_editor/main.bundle.js"></script></body>
 {{ super() }}
 {%- endblock %}
