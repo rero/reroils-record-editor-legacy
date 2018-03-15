@@ -191,7 +191,7 @@ def save(record_type):
         record_indexer.index(rec)
         message = {
             'pid': pid.pid_value,
-            'next': '/'
+            'next': url_for('reroils_record_editor.search_%s' % record_type)
         }
         if pid_value:
             flash(

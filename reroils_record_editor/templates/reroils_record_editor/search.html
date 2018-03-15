@@ -77,7 +77,6 @@
         {%- endblock search_pagination_top %}
         {%- block search_sort %}
         {%- set sort_options = config.get('RECORDS_REST_SORT_OPTIONS', {}).get(config.SEARCH_UI_SEARCH_INDEX) %}
-        {%- if sort_options %}
         <div class="col-md-3 col-sm-12 text-right">
           {%- block search_sort_select scoped %}
           {%- endblock search_sort_select %}
@@ -87,7 +86,6 @@
           {% endif %}
           {%- endblock search_sort_order %}
         </div>
-        {%- endif %}
         {%- endblock search_sort %}
       </div>
       <hr class="no-margin-top" />
