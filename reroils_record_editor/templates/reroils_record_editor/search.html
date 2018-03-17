@@ -37,6 +37,7 @@
 {%- endblock javascript %}
 
 {%- block body_inner %}
+
 <div id="invenio-search">
   <invenio-search
    search-endpoint="{{ search_api }}"
@@ -54,10 +55,17 @@
 {%- endblock page_header %}
 
 {%- block page_body %}
+
 <div class="container search-page">
 
   <div class="row">
+{%- block search_title %}
+    <div class="col-md-offset-3 col-md-9">
+        <h1>{{_(record_type)}}</h1>
+    </div>
+{%- endblock %}
     {%- block search_body %}
+
     <div class="col-xs-12 col-md-9 col-md-push-3">
       {%- block search_header %}
       <div class="row">

@@ -11,6 +11,9 @@
                 model='{{ model | tojson }}'
                 schema='{{ schema | tojson }}'
                 api_save_url='{{ api_save_url }}'
+                {%- if parent_pid %}
+                parent_pid='{{ parent_pid }}'
+                {% endif %}
             ></ng-initial>
             <alert></alert>
             <form name="recordEditor" ng-submit="onSubmit(recordEditor)">

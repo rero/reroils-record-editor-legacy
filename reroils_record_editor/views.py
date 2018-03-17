@@ -40,12 +40,13 @@ from invenio_indexer.api import RecordIndexer
 from invenio_pidstore import current_pidstore
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records.api import Record
+from invenio_records_rest.utils import obj_or_import_string
 from pkg_resources import resource_string
 
 from .babel_extractors import translate
 from .permissions import can_edit, record_edit_permission
-from .utils import clean_dict_keys, get_schema, get_schema_url, remove_pid, \
-    resolve
+from .utils import clean_dict_keys, delete_record, get_schema, \
+    get_schema_url, remove_pid, resolve, save_record
 
 
 @record_edit_permission.require()
@@ -67,6 +68,7 @@ def search(record_type, endpoints):
 @record_edit_permission.require()
 def create(record_type, endpoints):
     """Editor view for a new record for a given record type."""
+    parent_pid = request.args.get('parent_pid')
     cfg = endpoints.get(record_type)
     schema = cfg.get('schema')
     if not cfg or not schema:
@@ -79,23 +81,25 @@ def create(record_type, endpoints):
         options_in_bytes = resource_string(*form_options)
         form_options = loads(options_in_bytes.decode('utf8'))
 
-    for key_to_remove in cfg.get('form_options_create_exclude', []):
-        remove_pid(form_options, key_to_remove)
-    keys = current_app.config['REROILS_RECORD_EDITOR_TRANSLATE_JSON_KEYS']
-    form_options = translate(form_options, keys=keys)
+        for key_to_remove in cfg.get('form_options_create_exclude', []):
+            remove_pid(form_options, key_to_remove)
+        keys = current_app.config['REROILS_RECORD_EDITOR_TRANSLATE_JSON_KEYS']
+        form_options = translate(form_options, keys=keys)
     return render_template(
         current_app.config['REROILS_RECORD_EDITOR_EDITOR_TEMPLATE'],
         form=form_options or ['*'],
         model={'$schema': schema_url},
         schema=get_schema(schema),
         api_save_url='/editor/save/%s' % record_type,
-        record_type=record_type
+        record_type=record_type,
+        parent_pid=parent_pid
     )
 
 
 @record_edit_permission.require()
 def update(record_type, pid, endpoints):
     """Edior view to update an existing record."""
+    parent_pid = request.args.get('parent_pid')
     cfg = endpoints.get(record_type)
     schema = cfg.get('schema')
     if not cfg or not schema:
@@ -122,7 +126,8 @@ def update(record_type, pid, endpoints):
         model=rec,
         schema=get_schema(schema),
         api_save_url='/editor/save/%s' % record_type,
-        record_type=record_type
+        record_type=record_type,
+        parent_pid=parent_pid
     )
 
 
@@ -132,86 +137,63 @@ def delete(record_type, pid, endpoints):
 
     TODO: remove items also
     """
-    record_indexer = RecordIndexer()
+    parent_pid = request.args.get('parent_pid')
+    cfg = endpoints.get(record_type)
+    record_indexer = cfg.get('indexer_class') or RecordIndexer
+    _delete_record = obj_or_import_string(cfg.get('delete_record')) \
+        or delete_record
     try:
-        pid, record = resolve(record_type, pid)
-        record_indexer.delete(record)
-        record_indexer.client.indices.flush()
-        record.delete()
-        pid.delete()
-        db.session.commit()
+        _next, pid = _delete_record(record_type, pid, record_indexer,
+                                    parent_pid)
     except PIDDoesNotExistError:
         flash(_('The record %s does not exists.' % pid.pid_value), 'danger')
         abort(404)
     except Exception as e:
+        raise(e)
         flash(_('An error occured on the server.'), 'danger')
         abort(500)
 
     flash(_('The record %s has been deleted.' % pid.pid_value), 'success')
 
-    return redirect(url_for('invenio_search_ui.search'))
+    return redirect(_next)
 
 
-@record_edit_permission.require()
-def save(record_type):
+# @record_edit_permission.require()
+def save(record_type, endpoints):
     """Save record in the db and reindex it."""
+    parent_pid = request.args.get('parent_pid')
     config = current_app.config['RECORDS_REST_ENDPOINTS']
     config = config.get(record_type, {})
-
-    def get_pid(record_type, config):
-        pid_fetcher = config.get('pid_fetcher')
-        fetcher = current_pidstore.fetchers[pid_fetcher]
-        try:
-            pid_value = fetcher(None, record).pid_value
-        except KeyError:
-            return None
-        return pid_value
+    record_class = config.get('record_class') or Record
+    record_indexer = config.get('indexer_class') or RecordIndexer
+    pid_minter = config.get('pid_minter')
+    minter = current_pidstore.minters[pid_minter]
+    pid_fetcher = config.get('pid_fetcher')
+    fetcher = current_pidstore.fetchers[pid_fetcher]
+    cfg = endpoints.get(record_type)
+    _save_record = obj_or_import_string(cfg.get('save_record', save_record))
     try:
-        # load and clean dirty data provided by angular-schema-form
-        record = clean_dict_keys(request.get_json())
-        pid_value = get_pid(record_type, config)
-        # update an existing record
-        if pid_value:
-            pid, rec = resolve(record_type, pid_value)
-            rec.update(record)
-            rec.commit()
-        # create a new record
-        else:
-            # generate bibid
-            uid = uuid.uuid4()
-            pid_minter = config.get('pid_minter')
-            minter = current_pidstore.minters[pid_minter]
-            pid = minter(uid, record)
-            # create a new record
-            rec = Record.create(record, id_=uid)
-
-        db.session.commit()
-
-        record_indexer = RecordIndexer()
-        record_indexer.index(rec)
+        _next, pid = _save_record(request.get_json(), record_type, fetcher,
+                                  minter, record_indexer, record_class,
+                                  parent_pid)
         message = {
             'pid': pid.pid_value,
-            'next': url_for('reroils_record_editor.search_%s' % record_type)
+            'next': _next
         }
-        if pid_value:
-            flash(
-                _('The record %s has been updated.' % pid.pid_value),
-                'success'
-            )
-        else:
-            flash(
-                _('The record %s has been created.' % pid.pid_value),
-                'success'
-            )
+
+        flash(
+            _('The %s (pid: %s) has been saved.'
+              % (record_type, pid.pid_value)), 'success')
         return jsonify(message)
     except PIDDoesNotExistError:
-        msg = _('Cannot retrieve %s record during the update.' % pid_value)
+        msg = _('Cannot retrieve the %s.' % record_type)
         response = {
             'content': msg
         }
         return jsonify(response), 404
 
     except Exception as e:
+        raise(e)
         msg = _('An error occured on the server.')
         response = {
             'content': msg
@@ -243,13 +225,14 @@ def init_menu(endpoints):
         order=0
     )
     for record_type in endpoints.keys():
-        subitem = current_menu.submenu('main.manage.%s' % record_type)
-        icon = '<i class="fa fa-pencil-square-o fa-fw"></i> '
-        subitem.register(
-            endpoint='reroils_record_editor.search_%s' % record_type,
-            text=icon + _(record_type),
-            visible_when=can_edit
-        )
+        if endpoints.get(record_type, {}).get('api'):
+            subitem = current_menu.submenu('main.manage.%s' % record_type)
+            icon = '<i class="fa fa-pencil-square-o fa-fw"></i> '
+            subitem.register(
+                endpoint='reroils_record_editor.search_%s' % record_type,
+                text=icon + _(record_type),
+                visible_when=can_edit
+            )
 
 
 def create_blueprint(endpoints):
@@ -278,13 +261,14 @@ def create_blueprint(endpoints):
     blueprint.before_app_request(menu_func)
     for rec_type in rec_types:
         # search view
-        search_func = partial(search, record_type=rec_type,
-                              endpoints=endpoints)
-        search_func.__module__ = search.__module__
-        search_func.__name__ = search.__name__
-        blueprint.add_url_rule('/search/%s' % rec_type,
-                               endpoint='search_%s' % rec_type,
-                               view_func=search_func)
+        if endpoints.get(rec_type, {}).get('api'):
+            search_func = partial(search, record_type=rec_type,
+                                  endpoints=endpoints)
+            search_func.__module__ = search.__module__
+            search_func.__name__ = search.__name__
+            blueprint.add_url_rule('/search/%s' % rec_type,
+                                   endpoint='search_%s' % rec_type,
+                                   view_func=search_func)
         # create view
         create_func = partial(create, record_type=rec_type,
                               endpoints=endpoints)
@@ -310,7 +294,7 @@ def create_blueprint(endpoints):
                                endpoint='delete_%s' % rec_type,
                                view_func=delete_func)
         # save api
-        save_func = partial(save, record_type=rec_type)
+        save_func = partial(save, record_type=rec_type, endpoints=endpoints)
         save_func.__module__ = save.__module__
         save_func.__name__ = save.__name__
         blueprint.add_url_rule('/save/%s' % rec_type,

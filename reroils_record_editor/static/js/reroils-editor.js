@@ -5,7 +5,8 @@ angular.module('reroilseditor', ['schemaForm'])
             form: ["*"],
             model: {},
             schema: {},
-            api_save_url: ''
+            api_save_url: '',
+            parent_pid: undefined
         };
 
         $scope.message = {
@@ -14,11 +15,12 @@ angular.module('reroilseditor', ['schemaForm'])
             type: ""
         };
 
-        function editorInit(init, form, schema, model, api_save_url) {
+        function editorInit(init, form, schema, model, api_save_url, parent_pid) {
             $scope.params.schema = angular.fromJson(schema);
             $scope.params.model = angular.fromJson(model);
             $scope.params.form = angular.fromJson(form);
             $scope.params.api_save_url = api_save_url;
+            $scope.params.parent_pid = parent_pid;
         };
 
         $scope.$on('edit.init', editorInit);
@@ -53,13 +55,17 @@ angular.module('reroilseditor', ['schemaForm'])
         $scope.onSubmit = function(form) {
             // First we broadcast an event so all fields validate themselves
             $scope.$broadcast('schemaFormValidate');
-            console.log(form.$valid);
             // Then we check if the form is valid
             if (form.$valid) {
+                var save_url = $scope.params.api_save_url;
+                var parent_pid = $scope.params.parent_pid;
+                if (parent_pid !== undefined){
+                    save_url = save_url + '?parent_pid=' + parent_pid;
+                }
                 $http({
                         method: 'POST',
                         data: $scope.params.model,
-                        url: $scope.params.api_save_url
+                        url: save_url
                     }).then(function successCallback(response) {
                         $window.location.href = response.data.next;
                     }, function errorCallback(response) {
@@ -78,7 +84,7 @@ angular.module('reroilseditor', ['schemaForm'])
             controller: 'FormController',
             link: function (scope, element, attrs) {
                 scope.$broadcast(
-                    'edit.init', attrs.form, attrs.schema, attrs.model, attrs.apiSaveUrl
+                    'edit.init', attrs.form, attrs.schema, attrs.model, attrs.apiSaveUrl, attrs.parentPid
                 );
             }
         }
