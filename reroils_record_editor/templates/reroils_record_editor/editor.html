@@ -6,7 +6,8 @@
       <div class="col-md-12">
         <h1>{{_(record_type)}} {{_('Editor')}}</h1>
         <reroils-editor id="reroils-editor" ng-controller="FormController">
-            <ng-initial
+            {%- block editor_init %}
+            <editor-params
                 form='{{ form | jsondumps }}'
                 model='{{ model | tojson }}'
                 schema='{{ schema | tojson }}'
@@ -14,30 +15,44 @@
                 {%- if parent_pid %}
                 parent_pid='{{ parent_pid }}'
                 {% endif %}
-            ></ng-initial>
+            ></editor-params>
+            {%- endblock editor_init %}
+
+            {%- block alert %}
             <alert></alert>
-            <form name="recordEditor" ng-submit="onSubmit(recordEditor)">
-                <div class="container">
-                    <div class="row">
-                        <div sf-schema="params.schema" sf-form="params.form" sf-model="params.model"></div>
-                    </div>
+            {%- endblock alert %}
+
+            {%- block schema_editor %}
+            <div class="container">
+                <div class="row">
+                    <schema-form></schema-form>
                 </div>
-            </form>
+            </div>
+            {%- endblock schema_editor %}
+
         </reroils-editor>
       </div>
     </div>
 </div>
+
+    {%- block editor_javascript %}
+    {% assets "reroils_record_editor_editor_js" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
+    {% assets "reroils_record_editor_i18n" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
+    <script type="text/javascript">
+        (function (angular) {
+            // Bootstrap it!
+            angular.element(document).ready(function() {
+                angular.bootstrap(
+                    document.getElementById("reroils-editor"), [
+                        'reroilsEditor',
+                        'schemaForm'
+                    ]
+                );
+            });
+        })(angular);
+    </script>
+    {%- endblock %}
+
 {%- endblock %}
 
-{%- block javascript %}
 
-
-<script type="text/javascript" src="/static/node_modules/angular/angular.min.js"></script>
-<script type="text/javascript" src="/static/node_modules/angular-sanitize/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="/static/node_modules/tv4/tv4.js"></script>
-<script type="text/javascript" src="/static/node_modules/objectpath/lib/ObjectPath.js"></script>
-<script type="text/javascript" src="/static/node_modules/angular-schema-form/dist/schema-form.min.js"></script>
-<script type="text/javascript" src="/static/node_modules/angular-schema-form/dist/bootstrap-decorator.min.js"></script>
-<script type="text/javascript" src="/static/js/reroils-editor.js"></script>
-{{ super() }}
-{%- endblock %}

@@ -1,4 +1,29 @@
-angular.module('reroilseditor', ['schemaForm'])
+
+
+
+/*
+ * This file is part of Invenio.
+ * Copyright (C) 2015, 2016 CERN.
+ *
+ * Invenio is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * Invenio is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Invenio; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * In applying this license, CERN does not
+ * waive the privileges and immunities granted to it by virtue of its status
+ * as an Intergovernmental Organization or submit itself to any jurisdiction.
+ */
+angular.module('reroilsEditor', ['schemaForm'])
     .controller('FormController', function($scope, $http, $window) {
 
         $scope.params = {
@@ -24,6 +49,8 @@ angular.module('reroilseditor', ['schemaForm'])
         };
 
         $scope.$on('edit.init', editorInit);
+
+        // to move to document
         $scope.importEanFromBnf = function(test) {
           var isbn = $scope.params.model.identifiers.isbn;
           var schema = $scope.params.model['$schema'];
@@ -77,7 +104,7 @@ angular.module('reroilseditor', ['schemaForm'])
         }
     })
 
-    .directive('ngInitial', function($parse) {
+    .directive('editorParams', function($parse) {
         return {
             restrict: 'E',
             scope: false,
@@ -89,20 +116,18 @@ angular.module('reroilseditor', ['schemaForm'])
             }
         }
     })
+
+    .directive('schemaForm', function() {
+      return {
+        'template': '<form name="recordEditor" ng-submit="onSubmit(recordEditor)"><div sf-schema="params.schema" sf-form="params.form" sf-model="params.model"></div></form>'
+      }
+    })
+
     .directive('alert', function() {
         return {
             'template': '<div ng-show="message.title" class="alert alert-{{message.type}}"><strong>{{message.title}}</strong> {{message.content}}</div>'
         }
     });
 
-(function (angular) {
-    // Bootstrap it!
-    angular.element(document).ready(function() {
-        angular.bootstrap(
-            document.getElementById("reroils-editor"), [
-                'schemaForm',
-                'reroilseditor'
-            ]
-        );
-    });
-})(angular);
+
+

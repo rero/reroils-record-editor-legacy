@@ -122,18 +122,11 @@ setup(
         ],
         'babel.extractors': [
             'json = reroils_record_editor.babel_extractors:extract_json'
-        ]
-        # TODO: Edit these entry points to fit your needs.
-        # 'invenio_access.actions': [],
-        # 'invenio_admin.actions': [],
-        # 'invenio_assets.bundles': [],
-        # 'invenio_base.api_apps': [],
-        # 'invenio_base.api_blueprints': [],
-        # 'invenio_base.blueprints': [],
-        # 'invenio_celery.tasks': [],
-        # 'invenio_db.models': [],
-        # 'invenio_pidstore.minters': [],
-        # 'invenio_records.jsonresolver': [],
+        ],
+        'invenio_assets.bundles': [
+            'reroils_record_editor_editor_js = reroils_record_editor.bundles:editor_js',
+            'reroils_record_editor_i18n = reroils_record_editor.bundles:i18n'
+        ],
     },
     extras_require=extras_require,
     install_requires=install_requires,

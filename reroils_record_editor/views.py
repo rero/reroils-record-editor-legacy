@@ -55,7 +55,7 @@ def search(record_type, endpoints):
     cfg = endpoints.get(record_type)
     if not cfg or not cfg.get('api'):
         abort(404)
-    template = cfg.get('template')
+    template = cfg.get('search_template')
     api = cfg.get('api')
     results_template = cfg.get('results_template')
     res_tmpl = url_for('static',
@@ -70,6 +70,10 @@ def create(record_type, endpoints):
     """Editor view for a new record for a given record type."""
     parent_pid = request.args.get('parent_pid')
     cfg = endpoints.get(record_type)
+    default_template = current_app.config[
+        'REROILS_RECORD_EDITOR_EDITOR_TEMPLATE'
+    ]
+    template = cfg.get('editor_template', default_template)
     schema = cfg.get('schema')
     if not cfg or not schema:
         abort(404)
@@ -86,7 +90,7 @@ def create(record_type, endpoints):
         keys = current_app.config['REROILS_RECORD_EDITOR_TRANSLATE_JSON_KEYS']
         form_options = translate(form_options, keys=keys)
     return render_template(
-        current_app.config['REROILS_RECORD_EDITOR_EDITOR_TEMPLATE'],
+        template,
         form=form_options or ['*'],
         model={'$schema': schema_url},
         schema=get_schema(schema),
@@ -101,6 +105,10 @@ def update(record_type, pid, endpoints):
     """Edior view to update an existing record."""
     parent_pid = request.args.get('parent_pid')
     cfg = endpoints.get(record_type)
+    default_template = current_app.config[
+        'REROILS_RECORD_EDITOR_EDITOR_TEMPLATE'
+    ]
+    template = cfg.get('editor_template', default_template)
     schema = cfg.get('schema')
     if not cfg or not schema:
         abort(404)
@@ -112,17 +120,18 @@ def update(record_type, pid, endpoints):
         options_in_bytes = resource_string(*form_options)
         form_options = loads(options_in_bytes.decode('utf8'))
 
+        keys = current_app.config['REROILS_RECORD_EDITOR_TRANSLATE_JSON_KEYS']
+        form_options = translate(form_options, keys=keys)
+
     try:
         pid, rec = resolve(record_type, pid)
     except PIDDoesNotExistError:
         flash(_('The record %s does not exists.' % pid), 'danger')
         abort(404)
 
-    keys = current_app.config['REROILS_RECORD_EDITOR_TRANSLATE_JSON_KEYS']
-    form_options = translate(form_options, keys=keys)
     return render_template(
-        current_app.config['REROILS_RECORD_EDITOR_EDITOR_TEMPLATE'],
-        form=form_options,
+        template,
+        form=form_options or ['*'],
         model=rec,
         schema=get_schema(schema),
         api_save_url='/editor/save/%s' % record_type,
