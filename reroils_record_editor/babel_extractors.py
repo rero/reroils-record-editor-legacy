@@ -28,7 +28,6 @@ import json
 import re
 
 import six
-import re
 from flask_babelex import gettext as _
 
 KEY_VAL_REGEX = re.compile(r'"(.*?)"\s*:\s*"(.*?)"')
