@@ -106,6 +106,7 @@ def save_record(data, record_type, fetcher, minter,
     record_indexer().client.indices.flush()
     _next = url_for('invenio_records_ui.%s' % record_type,
                     pid_value=pid.pid_value)
+
     return _next, pid
 
 
