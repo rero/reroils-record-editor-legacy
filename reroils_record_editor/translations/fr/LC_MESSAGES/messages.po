@@ -4,15 +4,11 @@
 # reroils-record-editor project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
-# Translators:
-# iGor milhit <igor.milhit@rero.ch>, 2017
-# Johnny Mariéthoz <johnny.mariethoz@rero.ch>, 2017
-# Nicolas Labat <n-labat@hotmail.com>, 2018
 msgid ""
 msgstr ""
-"Project-Id-Version: reroils-record-editor 0.1.0a9\n"
+"Project-Id-Version: reroils-record-editor 0.1.0a10\n"
 "Report-Msgid-Bugs-To: software@rero.ch\n"
-"POT-Creation-Date: 2018-03-08 20:03+0100\n"
+"POT-Creation-Date: 2018-04-11 06:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Nicolas Labat <n-labat@hotmail.com>, 2018\n"
 "Language: fr\n"
@@ -23,36 +19,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.5.3\n"
 
-#: reroils_record_editor/views.py:114 reroils_record_editor/views.py:144
+#: reroils_record_editor/views.py:129 reroils_record_editor/views.py:158
 #, python-format
 msgid "The record %s does not exists."
 msgstr "La notice %s n'existe pas."
 
-#: reroils_record_editor/views.py:147 reroils_record_editor/views.py:215
+#: reroils_record_editor/views.py:162 reroils_record_editor/views.py:206
 msgid "An error occured on the server."
 msgstr "Une erreur est survenue sur le serveur."
 
-#: reroils_record_editor/views.py:150
+#: reroils_record_editor/views.py:165
 #, python-format
 msgid "The record %s has been deleted."
 msgstr "La notice %s a été supprimée."
 
+#: reroils_record_editor/views.py:195
+#, python-format
+msgid "The record has been saved (%s, pid: %s)."
+msgstr "L'enregistrement a réussi (%s, pid: %s)."
+
 #: reroils_record_editor/views.py:198
 #, python-format
-msgid "The record %s has been updated."
-msgstr "La notice %s a été modifiée."
+msgid "Cannot retrieve the record (%s)."
+msgstr "L'enregistrement n'est pas trouvable (%s)."
 
-#: reroils_record_editor/views.py:203
-#, python-format
-msgid "The record %s has been created."
-msgstr "La notice %s a été créée."
-
-#: reroils_record_editor/views.py:208
-#, python-format
-msgid "Cannot retrieve %s record during the update."
-msgstr "La notice %s n'a pas pu être trouvée lors de sa modification."
-
-#: reroils_record_editor/views.py:241
+#: reroils_record_editor/views.py:232
 msgid "Manage"
 msgstr "Administrer"
 
@@ -62,7 +53,7 @@ msgstr "Identifiants"
 
 #: reroils_record_editor/form_options/records/editor-v0.0.1.json:13
 msgid "id"
-msgstr ""
+msgstr "id"
 
 #: reroils_record_editor/form_options/records/editor-v0.0.1.json:14
 msgid "Persistent identifier, automatically generated."
@@ -99,25 +90,25 @@ msgstr "Email"
 
 #: reroils_record_editor/jsonschemas/records/editor-v0.0.1.json:19
 msgid "Email will be used for evil."
-msgstr ""
+msgstr "Email will be used for evil."
 
 #: reroils_record_editor/jsonschemas/records/editor-v0.0.1.json:25
 msgid "Don't be greedy!"
-msgstr ""
+msgstr "Don't be greedy!"
 
 #: reroils_record_editor/templates/reroils_record_editor/editor.html:7
 msgid "Editor"
 msgstr "Editeur"
 
-#: reroils_record_editor/templates/reroils_record_editor/search.html:86
+#: reroils_record_editor/templates/reroils_record_editor/search.html:93
 msgid "Create"
 msgstr "Créer"
 
-#: reroils_record_editor/templates/reroils_record_editor/search.html:98
+#: reroils_record_editor/templates/reroils_record_editor/search.html:104
 msgid "Search failed."
 msgstr "La recherche a échouée."
 
-#: reroils_record_editor/templates/reroils_record_editor/search.html:104
+#: reroils_record_editor/templates/reroils_record_editor/search.html:110
 msgid "Loading..."
 msgstr "Chargement..."
 

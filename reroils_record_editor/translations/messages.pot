@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: reroils-record-editor 0.1.0a10\n"
 "Report-Msgid-Bugs-To: software@rero.ch\n"
-"POT-Creation-Date: 2018-03-08 20:03+0100\n"
+"POT-Creation-Date: 2018-04-11 06:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,36 +17,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.5.3\n"
 
-#: reroils_record_editor/views.py:114 reroils_record_editor/views.py:144
+#: reroils_record_editor/views.py:129 reroils_record_editor/views.py:158
 #, python-format
 msgid "The record %s does not exists."
 msgstr ""
 
-#: reroils_record_editor/views.py:147 reroils_record_editor/views.py:215
+#: reroils_record_editor/views.py:162 reroils_record_editor/views.py:206
 msgid "An error occured on the server."
 msgstr ""
 
-#: reroils_record_editor/views.py:150
+#: reroils_record_editor/views.py:165
 #, python-format
 msgid "The record %s has been deleted."
 msgstr ""
 
+#: reroils_record_editor/views.py:195
+#, python-format
+msgid "The record has been saved (%s, pid: %s)."
+msgstr ""
+
 #: reroils_record_editor/views.py:198
 #, python-format
-msgid "The record %s has been updated."
+msgid "Cannot retrieve the record (%s)."
 msgstr ""
 
-#: reroils_record_editor/views.py:203
-#, python-format
-msgid "The record %s has been created."
-msgstr ""
-
-#: reroils_record_editor/views.py:208
-#, python-format
-msgid "Cannot retrieve %s record during the update."
-msgstr ""
-
-#: reroils_record_editor/views.py:241
+#: reroils_record_editor/views.py:232
 msgid "Manage"
 msgstr ""
 
@@ -103,15 +98,15 @@ msgstr ""
 msgid "Editor"
 msgstr ""
 
-#: reroils_record_editor/templates/reroils_record_editor/search.html:86
+#: reroils_record_editor/templates/reroils_record_editor/search.html:93
 msgid "Create"
 msgstr ""
 
-#: reroils_record_editor/templates/reroils_record_editor/search.html:98
+#: reroils_record_editor/templates/reroils_record_editor/search.html:104
 msgid "Search failed."
 msgstr ""
 
-#: reroils_record_editor/templates/reroils_record_editor/search.html:104
+#: reroils_record_editor/templates/reroils_record_editor/search.html:110
 msgid "Loading..."
 msgstr ""
 
