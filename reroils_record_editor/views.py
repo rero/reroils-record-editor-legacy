@@ -191,11 +191,11 @@ def save(record_type, endpoints):
         }
 
         flash(
-            _('The %s (pid: %s) has been saved.'
-              % (record_type, pid.pid_value)), 'success')
+            _('The record has been saved (%s, pid: %s).'
+              % (_(record_type), pid.pid_value)), 'success')
         return jsonify(message)
     except PIDDoesNotExistError:
-        msg = _('Cannot retrieve the %s.' % record_type)
+        msg = _('Cannot retrieve the record (%s).' % record_type)
         response = {
             'content': msg
         }
