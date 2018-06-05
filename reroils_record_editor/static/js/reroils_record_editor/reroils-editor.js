@@ -98,6 +98,10 @@ angular.module('reroilsEditor', ['schemaForm'])
                         $scope.message.title = 'Error:';
                 });
             }
+        };
+
+        $scope.onCancel = function() {
+            window.history.back();
         }
     })
 
@@ -125,6 +129,3 @@ angular.module('reroilsEditor', ['schemaForm'])
             'template': '<div ng-show="message.title" class="alert alert-{{message.type}}"><strong>{{message.title}}</strong> {{message.content}}</div>'
         }
     });
-
-
-
