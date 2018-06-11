@@ -26,10 +26,15 @@
 
 
 from flask_login import current_user
-from flask_principal import PermissionDenied, RoleNeed
+from flask_principal import RoleNeed
 from invenio_access.permissions import DynamicPermission
 
 record_edit_permission = DynamicPermission(RoleNeed('cataloguer'))
+
+
+def cataloguer_permission_factory(record, *args, **kwargs):
+    """User has editor role."""
+    return record_edit_permission
 
 
 def can_edit(user=None):
