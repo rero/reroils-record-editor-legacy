@@ -25,20 +25,17 @@
  Reroils-Record-Editor
 =======================
 
-.. image:: https://img.shields.io/travis/inveniosoftware/reroils-record-editor.svg
-        :target: https://travis-ci.org/inveniosoftware/reroils-record-editor
+.. image:: https://img.shields.io/travis/rero/reroils-record-editor.svg
+        :target: https://travis-ci.org/rero/reroils-record-editor
 
-.. image:: https://img.shields.io/coveralls/inveniosoftware/reroils-record-editor.svg
-        :target: https://coveralls.io/r/inveniosoftware/reroils-record-editor
+.. image:: https://img.shields.io/coveralls/rero/reroils-record-editor.svg
+        :target: https://coveralls.io/r/rero/reroils-record-editor
 
-.. image:: https://img.shields.io/github/tag/inveniosoftware/reroils-record-editor.svg
-        :target: https://github.com/inveniosoftware/reroils-record-editor/releases
+.. image:: https://img.shields.io/github/tag/rero/reroils-record-editor.svg
+        :target: https://github.com/rero/reroils-record-editor/releases
 
-.. image:: https://img.shields.io/pypi/dm/reroils-record-editor.svg
-        :target: https://pypi.python.org/pypi/reroils-record-editor
-
-.. image:: https://img.shields.io/github/license/inveniosoftware/reroils-record-editor.svg
-        :target: https://github.com/inveniosoftware/reroils-record-editor/blob/master/LICENSE
+.. image:: https://img.shields.io/github/license/rero/reroils-record-editor.svg
+        :target: https://github.com/rero/reroils-record-editor/blob/master/LICENSE
 
 reroils record editor
 
