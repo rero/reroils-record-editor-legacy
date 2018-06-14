@@ -76,11 +76,11 @@ setup_requires = [
 
 install_requires = [
     'Flask-BabelEx>=0.9.2',
-    'invenio-jsonschemas>=1.0.0a5',
-    'invenio-db >= 1.0.0b4',
-    'invenio-indexer >= 1.0.0a10',
+    'invenio-jsonschemas>=1.0.0',
+    'invenio-db >= 1.0.0',
+    'invenio-indexer >= 1.0.0',
     'elasticsearch-dsl>=2.0.0,<3.0.0',
-    'invenio-access>=1.0.0b1',
+    'invenio-access>=1.0.0',
     'dojson>=1.0'
 ]
 
