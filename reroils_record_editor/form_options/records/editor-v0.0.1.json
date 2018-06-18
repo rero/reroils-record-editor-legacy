@@ -1,34 +1,47 @@
 [
-    {
-        "type": "fieldset",
-        "title": "Identifiers",
-        "items": [{
-            "type": "section",
-            "htmlClass": "row",
-            "items": [{
-                "type": "section",
-                "htmlClass": "col-xs-4",
-                "items": [{
-                    "key": "id",
-                    "title": "id",
-                    "description": "Persistent identifier, automatically generated.",
-                    "readonly": true
-                }]
-            }]
-        }]
-    },
-    "name",
-    "email",
-    {
-        "key": "comment",
-        "type": "textarea",
-        "placeholder": "Make a comment"
-    },
-    {
-        "type": "actions",
+  {
+    "type": "fieldset",
+    "title": "Identifiers",
+    "items": [
+      {
+        "type": "section",
+        "htmlClass": "row",
         "items": [
-            { "type": "submit", "title": "Ok" },
-            { "type": "button", "title": "Cancel", "onClick": "goBack()" }
+          {
+            "type": "section",
+            "htmlClass": "col-xs-4",
+            "items": [
+              {
+                "key": "id",
+                "title": "id",
+                "description": "Persistent identifier, automatically generated.",
+                "readonly": true
+              }
+            ]
+          }
         ]
-    }
+      }
+    ]
+  },
+  "name",
+  "email",
+  {
+    "key": "comment",
+    "type": "textarea",
+    "placeholder": "Make a comment"
+  },
+  {
+    "type": "actions",
+    "items": [
+      {
+        "type": "submit",
+        "title": "Ok"
+      },
+      {
+        "type": "button",
+        "title": "Cancel",
+        "onClick": "goBack()"
+      }
+    ]
+  }
 ]

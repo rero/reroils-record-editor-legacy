@@ -2,17 +2,17 @@
   "type": "object",
   "title": "Comment",
   "properties": {
-    "id":  {
+    "id": {
       "title": "Persistent Identifier",
       "type": "string",
       "minLength": 1
     },
-    "name":  {
+    "name": {
       "title": "Name",
       "type": "string",
       "minLength": 3
     },
-    "email":  {
+    "email": {
       "title": "Email",
       "type": "string",
       "pattern": "^\\S+@\\S+$",
@@ -25,5 +25,9 @@
       "validationMessage": "Don't be greedy!"
     }
   },
-  "required": ["comment", "email", "name"]
+  "required": [
+    "comment",
+    "email",
+    "name"
+  ]
 }
