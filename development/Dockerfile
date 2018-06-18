@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y git curl
 RUN pip install -U setuptools pip &&\
     pip install -U virtualenv
 
-#Add reroils-data sources to `code` and work there:
+#Add sources to `code` and work there:
 WORKDIR  /reroils/reroils/src
 COPY build_app.sh /reroils/build_app.sh
 # Run container as user `invenio` with UID `1000`, which should match
