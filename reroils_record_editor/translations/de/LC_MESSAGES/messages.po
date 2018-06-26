@@ -1,4 +1,4 @@
-# Translations template for reroils-record-editor.
+# German translations for reroils-record-editor.
 # Copyright (C) 2018 RERO
 # This file is distributed under the same license as the
 # reroils-record-editor project.
@@ -6,18 +6,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: reroils-record-editor 0.1.0a11\n"
+"Project-Id-Version: reroils-record-editor 0.1.0a13\n"
 "Report-Msgid-Bugs-To: software@rero.ch\n"
-"POT-Creation-Date: 2018-04-30 07:08+0000\n"
+"POT-Creation-Date: 2018-06-25 14:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: iGor milhit <igor.milhit@rero.ch>, 2018\n"
+"Language: de\n"
 "Language-Team: German (https://www.transifex.com/rero/teams/77935/de/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.3\n"
-"Language: de\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.6.0\n"
 
 #: reroils_record_editor/views.py:129 reroils_record_editor/views.py:158
 #, python-format
@@ -51,23 +51,23 @@ msgstr "Verwalten"
 msgid "Identifiers"
 msgstr "Identifikatoren"
 
-#: reroils_record_editor/form_options/records/editor-v0.0.1.json:13
+#: reroils_record_editor/form_options/records/editor-v0.0.1.json:16
 msgid "id"
 msgstr "id"
 
-#: reroils_record_editor/form_options/records/editor-v0.0.1.json:14
+#: reroils_record_editor/form_options/records/editor-v0.0.1.json:17
 msgid "Persistent identifier, automatically generated."
 msgstr "Permanente Identifikatoren, automatisch generiert"
 
-#: reroils_record_editor/form_options/records/editor-v0.0.1.json:25
+#: reroils_record_editor/form_options/records/editor-v0.0.1.json:31
 msgid "Make a comment"
 msgstr "Kommentar schreiben"
 
-#: reroils_record_editor/form_options/records/editor-v0.0.1.json:30
+#: reroils_record_editor/form_options/records/editor-v0.0.1.json:38
 msgid "Ok"
 msgstr "Ok"
 
-#: reroils_record_editor/form_options/records/editor-v0.0.1.json:31
+#: reroils_record_editor/form_options/records/editor-v0.0.1.json:42
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -96,9 +96,39 @@ msgstr "E-Mail wird für das Böse benutzt."
 msgid "Don't be greedy!"
 msgstr "Sei nicht gierig!"
 
+#: reroils_record_editor/templates/reroils_record_editor/_button_actions.html:8
+msgid "Confirm Delete"
+msgstr "Löschen bestätigen"
+
+#: reroils_record_editor/templates/reroils_record_editor/_button_actions.html:12
+msgid "You are about to delete one record, this procedure is irreversible."
+msgstr ""
+"Sie sind dabei, einen Datensatz zu löschen, dieser Vorgang ist "
+"irreversibel."
+
+#: reroils_record_editor/templates/reroils_record_editor/_button_actions.html:13
+msgid "Do you want to proceed?"
+msgstr "Wollen Sie fortfahren?"
+
+#: reroils_record_editor/templates/reroils_record_editor/_button_actions.html:28
+msgid "JSON"
+msgstr "JSON"
+
+#: reroils_record_editor/templates/reroils_record_editor/_button_actions.html:31
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: reroils_record_editor/templates/reroils_record_editor/_button_actions.html:34
+msgid "Delete"
+msgstr "Löschen"
+
 #: reroils_record_editor/templates/reroils_record_editor/editor.html:7
 msgid "Editor"
 msgstr "Editor"
+
+#: reroils_record_editor/templates/reroils_record_editor/header.html:29
+msgid "Search"
+msgstr "Suche"
 
 #: reroils_record_editor/templates/reroils_record_editor/search.html:93
 msgid "Create"
@@ -111,3 +141,4 @@ msgstr "Die Suche ist fehlgeschlagen."
 #: reroils_record_editor/templates/reroils_record_editor/search.html:110
 msgid "Loading..."
 msgstr "Wird geladen..."
+
