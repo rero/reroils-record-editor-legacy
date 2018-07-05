@@ -27,12 +27,16 @@
                 <a href="#source-{{ json.id }}" data-toggle="collapse" type="button" class="btn btn-info">
                     <i class="fa fa-search-plus  fa-fw"></i> {{_('JSON')}}
                 </a>
-                <a href="{{ href_update }}" type="button" class="btn btn-success">
-                    <i class="fa fa-pencil-square-o fa-fw"></i> {{_('Edit')}}
-                </a>
+                {% if href_update %}
+                  <a href="{{ href_update }}" type="button" class="btn btn-success">
+                      <i class="fa fa-pencil-square-o fa-fw"></i> {{_('Edit')}}
+                  </a>
+                {% endif %}
+                {% if href_delete %}
                 <a href="#confirm-{{ json.id }}" type="button" class="btn btn-danger" data-toggle="modal">
                     <i class="fa fa-trash-o fa-fw"></i> {{_('Delete')}}
                 </a>
+                {% endif %}
             </div>
         </div>
     </div>
