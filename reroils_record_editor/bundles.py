@@ -42,6 +42,7 @@ def catalog(domain):
         '{0}.po'.format(domain),
     )
 
+
 catalog_name = 'reroilsRecordEditorTranslations'
 
 i18n = GlobBundle(
@@ -62,7 +63,7 @@ schema_form_js = NpmBundle(
         'angular-sanitize': '~1.6.9',
         'tv4': '^1.3.0',
         'objectpath': '^1.2.1',
-        'angular-schema-form': '^0.8.13'
+        'angular-schema-form': '0.8.13'
     }
 )
 
