@@ -24,13 +24,12 @@
 
 """Utilities for reroils-record-editor."""
 
-import copy
-import uuid
-
 from flask import current_app, url_for
 from invenio_db import db
 from invenio_pidstore.resolver import Resolver
 from invenio_records.api import Record
+
+import uuid
 
 from .babel_extractors import translate
 

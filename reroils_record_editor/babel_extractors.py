@@ -24,7 +24,6 @@
 
 """reroils translation json utils."""
 
-import json
 import re
 
 import six

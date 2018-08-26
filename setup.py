@@ -32,6 +32,7 @@ from setuptools.command.egg_info import egg_info
 readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
+
 class EggInfoWithCompile(egg_info):
     def run(self):
         from babel.messages.frontend import compile_catalog
@@ -58,6 +59,7 @@ tests_require = [
     'pytest>=2.8.0',
 ]
 
+
 extras_require = {
     'docs': [
         'Sphinx>=1.5.1',
@@ -76,7 +78,6 @@ setup_requires = [
 
 install_requires = [
     'dojson>=1.0',
-    'elasticsearch-dsl>=2.0.0,<3.0.0',
     'Flask-BabelEx>=0.9.3',
     'invenio-access>=1.0.0',
     'invenio-assets>=1.0.0',
@@ -85,7 +86,7 @@ install_requires = [
     'invenio-jsonschemas>=1.0.0',
     'invenio-records>=1.0.0',
     'invenio-records-rest>=1.0.1',
-    'invenio-search>=1.0.0'
+    'invenio-search>=1.0.0',
 ]
 
 packages = find_packages()
