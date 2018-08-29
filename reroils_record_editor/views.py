@@ -167,19 +167,19 @@ def delete(record_type, pid, endpoints):
     return redirect(_next)
 
 
-# @record_edit_permission.require()
+@record_edit_permission.require()
 def save(record_type, endpoints):
     """Save record in the db and reindex it."""
     parent_pid = request.args.get('parent_pid')
     config = current_app.config['RECORDS_REST_ENDPOINTS']
     config = config.get(record_type, {})
-    record_class = config.get('record_class') or Record
+    cfg = endpoints.get(record_type)
+    record_class = cfg.get('record_class') or Record
     record_indexer = config.get('indexer_class') or RecordIndexer
     pid_minter = config.get('pid_minter')
     minter = current_pidstore.minters[pid_minter]
     pid_fetcher = config.get('pid_fetcher')
     fetcher = current_pidstore.fetchers[pid_fetcher]
-    cfg = endpoints.get(record_type)
     _save_record = obj_or_import_string(cfg.get('save_record', save_record))
     try:
         _next, pid = _save_record(request.get_json(), record_type, fetcher,
