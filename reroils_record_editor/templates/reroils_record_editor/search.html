@@ -33,7 +33,7 @@
   {%- if config.I18N_LANGUAGES %}
     {% assets "invenio_i18n_js" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
   {%- endif %}
-  {% assets "reroils_app_search_js" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
+  {% assets "rero_ils_search_js" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
 {%- endblock javascript %}
 
 {%- block body_inner %}
@@ -132,7 +132,7 @@
        template="{{ url_for('static', filename=config.SEARCH_UI_JSTEMPLATE_RANGE) }}">
       </invenio-search-range>
       {%- endblock search_range %}
-      <invenio-search-facets order="{{ config.get('REROILS_APP_SORT_FACETS', {}).get(config.SEARCH_UI_SEARCH_INDEX, '') }}"
+      <invenio-search-facets order="{{ config.get('RERO_ILS_SORT_FACETS', {}).get(config.SEARCH_UI_SEARCH_INDEX, '') }}"
        template="{{ url_for('static', filename=config.SEARCH_UI_JSTEMPLATE_FACETS) }}">
       </invenio-search-facets>
     </div>
