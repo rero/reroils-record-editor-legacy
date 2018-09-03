@@ -25,7 +25,6 @@
 """reroils record editor."""
 
 
-import uuid
 from functools import partial
 from json import dumps, loads
 
@@ -35,8 +34,6 @@ from flask_babelex import gettext as _
 from flask_login import current_user
 from flask_menu import current_menu
 from flask_principal import PermissionDenied
-from invenio_db import db
-from invenio_indexer.api import RecordIndexer
 from invenio_pidstore import current_pidstore
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records.api import Record
@@ -45,8 +42,8 @@ from pkg_resources import resource_string
 
 from .babel_extractors import translate
 from .permissions import can_edit, record_edit_permission
-from .utils import clean_dict_keys, delete_record, get_schema, \
-    get_schema_url, remove_pid, resolve, save_record
+from .utils import delete_record, get_schema, get_schema_url, remove_pid, \
+    resolve, save_record
 
 
 @record_edit_permission.require()
@@ -114,7 +111,7 @@ def update(record_type, pid, endpoints):
         abort(404)
 
     form_options = cfg.get('form_options')
-    schema_url = get_schema_url(schema)
+    get_schema_url(schema)
 
     if form_options:
         options_in_bytes = resource_string(*form_options)
@@ -146,9 +143,13 @@ def delete(record_type, pid, endpoints):
 
     TODO: remove items also
     """
+    from invenio_indexer.api import RecordIndexer
+
     parent_pid = request.args.get('parent_pid')
     cfg = endpoints.get(record_type)
-    record_indexer = cfg.get('indexer_class') or RecordIndexer
+    record_indexer = obj_or_import_string(
+        cfg.get('indexer_class') or RecordIndexer
+    )
     _delete_record = obj_or_import_string(cfg.get('delete_record')) \
         or delete_record
     try:
@@ -170,11 +171,15 @@ def delete(record_type, pid, endpoints):
 @record_edit_permission.require()
 def save(record_type, endpoints):
     """Save record in the db and reindex it."""
+    from invenio_indexer.api import RecordIndexer
+
     parent_pid = request.args.get('parent_pid')
     config = current_app.config['RECORDS_REST_ENDPOINTS']
     config = config.get(record_type, {})
     cfg = endpoints.get(record_type)
-    record_class = cfg.get('record_class') or Record
+    record_class = obj_or_import_string(
+        cfg.get('record_class') or Record
+    )
     record_indexer = config.get('indexer_class') or RecordIndexer
     pid_minter = config.get('pid_minter')
     minter = current_pidstore.minters[pid_minter]
@@ -219,8 +224,9 @@ def permission_denied_page(error):
     """Show a personalized error message."""
     if not current_user.is_authenticated:
         return redirect(url_for(
-                    current_app.config['ADMIN_LOGIN_ENDPOINT'],
-                    next=request.url))
+            current_app.config['ADMIN_LOGIN_ENDPOINT'],
+            next=request.url)
+        )
     return render_template(current_app.config['THEME_403_TEMPLATE']), 403
 
 

@@ -24,8 +24,8 @@
 
 """reroils record editor."""
 
-from invenio_indexer.api import RecordIndexer
-from invenio_records.api import Record
+# from invenio_indexer.api import RecordIndexer
+# from invenio_records.api import Record
 
 REROILS_RECORD_EDITOR_BASE_TEMPLATE = 'reroils_record_editor/base.html'
 """Default base template for the demo page."""
@@ -39,8 +39,8 @@ REROILS_RECORD_EDITOR_OPTIONS = dict(
         search_template='reroils_record_editor/search.html',
         results_template='templates/invenio_search_ui/marc21/default.html',
         schema='records/record-v0.0.1.json',
-        record_class=Record,
-        indexer_class=RecordIndexer
+        record_class='invenio_records.api.Record',
+        indexer_class='invenio_indexer.api.RecordIndexer'
         # form_options=('reroils_record_editor.form_options',
         #               'records/record-v0.0.1.json'),
         # form_options_create_exclude=['controll']
