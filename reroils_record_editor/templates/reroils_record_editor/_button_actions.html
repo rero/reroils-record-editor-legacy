@@ -30,7 +30,7 @@
                 <a href="{{ href_update }}" type="button" class="btn btn-success">
                     <i class="fa fa-pencil-square-o fa-fw"></i> {{_('Edit')}}
                 </a>
-                <a href="#confirm-{{ json.id }}" type="button" class="btn btn-danger" data-toggle="modal">
+                <a {% if json.can_delete %}href="#confirm-{{ json.id }}"{% endif %} type="button" class="btn btn-danger" data-toggle="{% if json.can_delete %}modal{% else %}tooltip{% endif %}" {% if not json.can_delete %}disabled {% endif %}{%if message and not json.can_delete %} title="{{ message }}"{% endif %}>
                     <i class="fa fa-trash-o fa-fw"></i> {{_('Delete')}}
                 </a>
             </div>
