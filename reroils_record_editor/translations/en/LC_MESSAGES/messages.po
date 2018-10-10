@@ -4,11 +4,13 @@
 # reroils-record-editor project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
+# Translators:
+# iGor milhit <igor.milhit@rero.ch>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: reroils-record-editor 0.1.0a13\n"
 "Report-Msgid-Bugs-To: software@rero.ch\n"
-"POT-Creation-Date: 2018-06-25 14:49+0200\n"
+"POT-Creation-Date: 2018-10-10 07:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: iGor milhit <igor.milhit@rero.ch>, 2018\n"
 "Language: en\n"
@@ -19,31 +21,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
 
-#: reroils_record_editor/views.py:129 reroils_record_editor/views.py:158
+#: reroils_record_editor/views.py:126 reroils_record_editor/views.py:159
 #, python-format
 msgid "The record %s does not exists."
 msgstr "The record %s does not exists."
 
-#: reroils_record_editor/views.py:162 reroils_record_editor/views.py:206
+#: reroils_record_editor/views.py:163 reroils_record_editor/views.py:211
 msgid "An error occured on the server."
 msgstr "An error occured on the server."
 
-#: reroils_record_editor/views.py:165
+#: reroils_record_editor/views.py:166
 #, python-format
 msgid "The record %s has been deleted."
 msgstr "The record %s has been deleted."
 
-#: reroils_record_editor/views.py:195
+#: reroils_record_editor/views.py:200
 #, python-format
 msgid "The record has been saved (%s, pid: %s)."
 msgstr "The record has been saved (%s, pid: %s)."
 
-#: reroils_record_editor/views.py:198
+#: reroils_record_editor/views.py:203
 #, python-format
 msgid "Cannot retrieve the record (%s)."
 msgstr "Cannot retrieve the record (%s)."
 
-#: reroils_record_editor/views.py:232
+#: reroils_record_editor/views.py:238
 msgid "Manage"
 msgstr "Manage"
 
